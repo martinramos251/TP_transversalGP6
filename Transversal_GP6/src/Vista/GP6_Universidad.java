@@ -1,6 +1,6 @@
-package Entidades;
+package Vista;
 
-public class Main {
+public class GP6_Universidad {
 
     public static void main(String[] args) {
         
