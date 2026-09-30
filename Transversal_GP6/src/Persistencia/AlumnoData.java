@@ -3,7 +3,6 @@ package Persistencia;
 import Entidades.Alumno;
 import java.sql.Connection;
 
-
 import java.sql.Date;
 import java.sql.PreparedStatement;
 
@@ -14,14 +13,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-/*
+
 public class AlumnoData{
     private Connection con = null;
-    
-    public AlumnoData(miConexion conexion){
+
+    public AlumnoData(MiConexion conexion) throws SQLException, ClassNotFoundException{
         this.con = conexion.buscarConexion();
     }
-    
+}
+    /*
     public void guardarAlumno(Alumno a){    // obj alumno sin id valido
         String sql = "INSERT INTO alumno(dni, nombre, fecNac, activo) VALUES (?,?,?,?)";  //1
         
