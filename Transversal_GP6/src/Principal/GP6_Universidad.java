@@ -1,4 +1,4 @@
-package Vista;
+package Principal;
 
 public class GP6_Universidad {
 

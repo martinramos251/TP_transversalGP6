@@ -1,7 +1,7 @@
 package Entidades;
 
 public class Materia {
-    int idMateria = 0;
+    int idMateria;
     String nombre;
     String estado;
 
