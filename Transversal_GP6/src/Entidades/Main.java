@@ -1,4 +1,4 @@
-package transversal_gp6;
+package Entidades;
 
 public class Main {
 
