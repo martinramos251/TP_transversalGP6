@@ -11,64 +11,58 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public class AlumnoData{
-    private Connection con = null;
+public class AlumnoData {
 
-    public AlumnoData(MiConexion conexion) throws SQLException, ClassNotFoundException{
-        this.con = conexion.buscarConexion();
+    private Connection conect = null;
+
+    public AlumnoData(MiConexion conexion) throws SQLException, ClassNotFoundException {
+        this.conect = conexion.buscarConexion();
+    }
+
+    public void guardarAlumno(Alumno a) { 
+        String sql = "INSERT INTO alumno (dni, nombre, fechaNac, activo) VALUES (?,?,?,?)";
+        try(PreparedStatement ps = conect.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) { 
+            ps.setInt(1, a.getDni()); //Carga del dni al alumno (posicion 1 del INSERT).
+            ps.setString(2, a.getNombre()); //Carga del nombre al alumno (posicion 2 del INSERT).
+            ps.setDate(3, Date.valueOf(a.getFechaNac())); //Carga la fecha al alumno (posicion 3 del INSERT).
+            ps.setBoolean(4,a.getActivo()); //Carga el estado al alumno (posicion 4 del INSERT).
+            ps.executeUpdate(); //Se ejecuta la consulta.
+            
+            ResultSet rs = ps.getGeneratedKeys(); //Recupero un alumno y le asigno el id (auto-incremental) al id de mi atributo Alumno
+            if (rs.next()) {
+                a.setIdAlumno(rs.getInt(1));
+            } else {
+                System.out.println("No se pudo tener ID");
+            }
+            System.out.println("Guardado!");
+        } catch (SQLException ex) {
+            System.out.println("No se pudo insertar");
+        }
+    }
+    
+     public Alumno buscarAlumno(int id){
+        Alumno alumno = null;
+        String sql = "SELECT * FROM alumno WHERE idAlumno= ?";
+
+        try(PreparedStatement ps = conect.prepareStatement(sql)) {
+            ps.setInt(1,id);
+            ResultSet rs= ps.executeQuery();
+            while (rs.next()) {  // 4 armo el objeto
+                alumno = new Alumno();
+                alumno.setIdAlumno(rs.getInt("idAlumno"));
+                alumno.setDni(rs.getInt("dni"));
+                alumno.setNombre(rs.getString("nombre"));
+                alumno.setFechaNac(rs.getDate("fechaNac").toLocalDate()); // Date.valueOf( )
+                alumno.setActivo(rs.getBoolean("activo"));
+            }          
+        }catch (SQLException ex) {
+            System.out.println("No se pudo hacer la consulta");
+        }
+        return alumno;    
     }
 }
     /*
-    public void guardarAlumno(Alumno a){    // obj alumno sin id valido
-        String sql = "INSERT INTO alumno(dni, nombre, fecNac, activo) VALUES (?,?,?,?)";  //1
-        
-        try {
-            PreparedStatement ps = con.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS); //2
-            //ps.setInt(1.........
-            ps.setDate(3, Date.valueOf(a.getFecNac()));
-            //ps.setBoolean(4..........
-            ps.executeUpdate();     // 3
-            
-            ResultSet rs = ps.getGeneratedKeys();  // recupero y asigno
-            if(rs.next())
-                a.setId(rs.getInt(1));
-            else
-                System.out.println("No se pudo tener ID");
-            ps.close();
-            System.out.println("Guardado!");
-        } catch (SQLException ex) {
-            System.out.println("No pude insertar");    
-        }
-        
-    }   // INSERT INTO
-    
-    public Alumno buscarAlumno(int id){
-      Alumno a= null;
-      String sql = "SELECT * FROM alumno WHERE idAlumno= ?";  //1
-      
-      PreparedStatement ps;
-        try {
-            ps = con.prepareStatement(sql);    // 2
-          //  ps.setInt(1,........
-		  ResultSet rs= ps.executeQuery();  //3
-            while (rs.next()) {  // 4 armo el objeto
-                a=new Alumno();
-                a.setId(....);
-                a.....(rs.getInt("dni"));
-                ......(rs............);
-                a.setFecNac(rs.getDate("fecNac").toLocalDate()); // Date.valueOf( )
-                a.setActivo(rs.getBoolean("activo"));
-            }
-            ps.close(); // 5
-            
-        } catch (SQLException ex) {
-            Logger.getLogger(AlumnoData.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return a; 
-    }  // SELECT 1 ALUMNO
     
     public List<Alumno> listarAlumnos(){
         Alumno a= null;   // ALUMNO recipiente

@@ -3,10 +3,10 @@ package Entidades;
 import java.time.LocalDate;
 
 public class Alumno {
-    int idAlumno = 0;
+    int idAlumno;
     int dni;
     String nombre;
-    LocalDate fechaN;
+    LocalDate fechaNac;
     boolean activo;
 
     public Alumno() {
@@ -15,7 +15,7 @@ public class Alumno {
     public Alumno(int dni, String nombre, LocalDate fechaN, boolean activo) {
         this.dni = dni;
         this.nombre = nombre;
-        this.fechaN = fechaN;
+        this.fechaNac = fechaN;
         this.activo = activo;
     }
 
@@ -25,8 +25,7 @@ public class Alumno {
 
     public void setIdAlumno(int idAlumno) {
         this.idAlumno = idAlumno;
-    }
-    
+    }  
 
     public int getDni() {
         return dni;
@@ -44,19 +43,26 @@ public class Alumno {
         this.nombre = nombre;
     }
 
-    public LocalDate getFechaN() {
-        return fechaN;
+    public LocalDate getFechaNac() {
+        return fechaNac;
     }
 
-    public void setFechaN(LocalDate fechaN) {
-        this.fechaN = fechaN;
+    public void setFechaNac(LocalDate fechaNac) {
+        this.fechaNac = fechaNac;
     }
 
-    public boolean isActivo() {
+    public boolean getActivo() {
         return activo;
     }
 
     public void setActivo(boolean activo) {
         this.activo = activo;
     }
+
+    @Override
+    public String toString() {
+        return "Alumno{" + "idAlumno=" + idAlumno + ", dni=" + dni + ", nombre=" + nombre + ", fechaNac=" + fechaNac + ", activo=" + activo + '}';
+    }
+    
+    
 }
