@@ -1,14 +1,7 @@
 package Persistencia;
 
 import Entidades.Alumno;
-import java.sql.Connection;
-
-import java.sql.Date;
-import java.sql.PreparedStatement;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,14 +34,14 @@ public class AlumnoData {
         }
     }
     
-     public Alumno buscarAlumno(int id){
+    public Alumno buscarAlumno(int id){
         Alumno alumno = null;
         String sql = "SELECT * FROM alumno WHERE idAlumno= ?";
 
         try(PreparedStatement ps = conect.prepareStatement(sql)) {
             ps.setInt(1,id);
             ResultSet rs= ps.executeQuery();
-            while (rs.next()) {  // 4 armo el objeto
+            while (rs.next()) {  
                 alumno = new Alumno();
                 alumno.setIdAlumno(rs.getInt("idAlumno"));
                 alumno.setDni(rs.getInt("dni"));
@@ -61,34 +54,30 @@ public class AlumnoData {
         }
         return alumno;    
     }
-}
-    /*
-    
+     
     public List<Alumno> listarAlumnos(){
-        Alumno a= null;   // ALUMNO recipiente
-        //        CREAR ARRAYLIST     
-        String query = "SELECT * ................";  // 1
-        try {
-            PreparedStatement ps = con.prepareStatement(query); //2
+        Alumno alumno= null;
+        ArrayList<Alumno> listado = new ArrayList<>();
+        String query = "SELECT * FROM alumno";  // 1
+        try(PreparedStatement ps = conect.prepareStatement(query)) {
             ResultSet rs = ps.executeQuery();  //3
             while(rs.next()){     //4
-                // instanciar alumno recipiente
-                a.setId(rs.getInt("idAlumno"));
-                a.setDni(rs.getInt("dni"));
-                a.setNombre(rs.getString("nombre"));
-                a.setFecNac(rs.getDate("fechaNac").toLocalDate());
-                a.setActivo(rs.getBoolean("activo"));
-            //    alumnos.add(a);    // agregar al ARRAYLIST
+                alumno = new Alumno();
+                alumno.setIdAlumno(rs.getInt("idAlumno"));
+                alumno.setDni(rs.getInt("dni"));
+                alumno.setNombre(rs.getString("nombre"));
+                alumno.setFechaNac(rs.getDate("fechaNac").toLocalDate());
+                alumno.setActivo(rs.getBoolean("activo"));
+            //    listado.add(alumno);    // agregar al ARRAYLIST
             }
-            ps.close();   // 5
             
         } catch (SQLException ex) {
-            Logger.getLogger(AlumnoData.class.getName()).log(Level.SEVERE, null, ex);
+            
         }
-        
-        return alumnos;
-    } // SELECT *
-    
+        return listado;
+    }
+}
+   /* 
     public void actualizarAlumno(Alumno a){
         String query = "UPDATE ..........................................";  //1
         
