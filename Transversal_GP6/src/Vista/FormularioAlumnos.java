@@ -20,7 +20,6 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         BGsexos = new javax.swing.ButtonGroup();
-        jCalendar1 = new com.toedter.calendar.JCalendar();
         JLalumnos = new javax.swing.JLabel();
         JPbuscar_id = new javax.swing.JPanel();
         JLid = new javax.swing.JLabel();
@@ -176,7 +175,6 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
     private javax.swing.JRadioButton JRBfemenino;
     private javax.swing.JRadioButton JRBmasculino;
     private javax.swing.JRadioButton JRBotro;
-    private com.toedter.calendar.JCalendar jCalendar1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField jTextField1;
