@@ -79,7 +79,7 @@ public class AlumnoData {
     }
 
     public void actualizarAlumno(Alumno a){
-        String sql = "UPDATE alumno SET dni = ?, nombre = ?, fechaNac = ?,activo = ?, WHERE idAlumno = ? ";  //1
+        String sql = "UPDATE alumno SET dni = ?, nombre = ?, fechaNac = ?,activo = ? WHERE idAlumno = ? ";  //1
         
         try (PreparedStatement ps = conect.prepareStatement(sql)){//2
             ResultSet rs = ps.executeQuery(); 
