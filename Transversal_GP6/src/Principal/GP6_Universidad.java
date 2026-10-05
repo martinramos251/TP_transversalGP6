@@ -18,7 +18,13 @@ public class GP6_Universidad {
             Alumno luciano = new Alumno(42239994, "Luciano", LocalDate.of(1999, 11, 21), true);
             Alumno Luciano = null;
             alu.guardarAlumno(luciano);
-            System.out.println(alu.buscarAlumno(4));   
+            System.out.println(alu.buscarAlumno(8));
+            
+              Alumno enzo = new Alumno(44954914, "Enzo", LocalDate.of(2003, 9, 2), true);
+            Alumno Enzo = null;
+            alu.guardarAlumno(enzo);
+                        System.out.println(alu.buscarAlumno(9));
+
             
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Error de conexion" + ex.getMessage());
