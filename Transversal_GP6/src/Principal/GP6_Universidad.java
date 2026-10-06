@@ -10,15 +10,24 @@ import javax.swing.JOptionPane;
 public class GP6_Universidad {
 
     public static void main(String[] args) {
-        try{
-            
+        try {
+
             MiConexion conexion = new MiConexion(); //Instanciar objeto MiConexion para usarlo en el metodo de AlumnoData
             AlumnoData alu = new AlumnoData(conexion); //Se instancia un objeto AlumnoData que inicializa el metodo buscarConexion
-            
-            //Alumno martin = new Alumno(45267558, "Martin", LocalDate.of(2003, 9, 3), true);
-            //alu.guardarAlumno(martin);
-            System.out.println(alu.buscarAlumno(19));   
-            
+
+            /* CARGA DE ALUMNOS */
+//            Alumno luciano = new Alumno(42239994, "Luciano", LocalDate.of(1999, 11, 21), true);
+//            alu.guardarAlumno(luciano);
+//
+//            Alumno franco = new Alumno(37640491, "Franco", LocalDate.of(1999, 11, 15), true);
+//            alu.guardarAlumno(franco);
+//
+//            Alumno enzo = new Alumno(44954914, "Enzo", LocalDate.of(2003, 9, 2), true);
+//            alu.guardarAlumno(enzo);
+//            
+//            Alumno martin = new Alumno(45267558, "Martin", LocalDate.of(2003, 9, 3), true);
+//            alu.guardarAlumno(martin);
+
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Error de conexion" + ex.getMessage());
         } catch (ClassNotFoundException cargar) {

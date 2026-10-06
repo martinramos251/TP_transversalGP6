@@ -5,9 +5,10 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class MiConexion {
+
     private static Connection connection;
     private static final String URL = "jdbc:mariadb://localhost:3306/grupo_6_universidad";
-        private static final String USUARIO = "root";
+    private static final String USUARIO = "root";
     private static final String PASSWORD = "";
 
     public MiConexion() {
@@ -20,7 +21,7 @@ public class MiConexion {
     public static void setConnection(Connection connection) {
         MiConexion.connection = connection;
     }
- 
+
     //Permite establecer la conexion con la base de datos
     public Connection buscarConexion() throws SQLException, ClassNotFoundException {
         if (connection == null) {

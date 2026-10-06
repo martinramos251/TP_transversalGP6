@@ -4,8 +4,6 @@
   <NonVisualComponents>
     <Component class="javax.swing.ButtonGroup" name="BGsexos">
     </Component>
-    <Component class="com.toedter.calendar.JCalendar" name="jCalendar1">
-    </Component>
   </NonVisualComponents>
   <Properties>
     <Property name="closable" type="boolean" value="true"/>
