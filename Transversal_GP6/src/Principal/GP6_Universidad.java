@@ -15,20 +15,18 @@ public class GP6_Universidad {
             MiConexion conexion = new MiConexion(); //Instanciar objeto MiConexion para usarlo en el metodo de AlumnoData
             AlumnoData alu = new AlumnoData(conexion); //Se instancia un objeto AlumnoData que inicializa el metodo buscarConexion
 
-            Alumno luciano = new Alumno(42239994, "Luciano", LocalDate.of(1999, 11, 21), true);
-            alu.guardarAlumno(luciano);
-            System.out.println(alu.buscarAlumno(4));
-
-            Alumno franco = new Alumno(37640491, "Franco", LocalDate.of(1999, 11, 15), true);
-            //alu.guardarAlumno(franco);
-
-            alu.altaBajaLogica(4, true);
-            //alu.altaBajaLogica(1, false);
-
-            Alumno enzo = new Alumno(44954914, "Enzo", LocalDate.of(2003, 9, 2), true);
-            Alumno Enzo = null;
-            alu.guardarAlumno(enzo);
-            System.out.println(alu.buscarAlumno(9));
+            /* CARGA DE ALUMNOS */
+//            Alumno luciano = new Alumno(42239994, "Luciano", LocalDate.of(1999, 11, 21), true);
+//            alu.guardarAlumno(luciano);
+//
+//            Alumno franco = new Alumno(37640491, "Franco", LocalDate.of(1999, 11, 15), true);
+//            alu.guardarAlumno(franco);
+//
+//            Alumno enzo = new Alumno(44954914, "Enzo", LocalDate.of(2003, 9, 2), true);
+//            alu.guardarAlumno(enzo);
+//            
+//            Alumno martin = new Alumno(45267558, "Martin", LocalDate.of(2003, 9, 3), true);
+//            alu.guardarAlumno(martin);
 
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Error de conexion" + ex.getMessage());
