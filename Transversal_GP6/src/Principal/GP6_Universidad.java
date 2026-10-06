@@ -1,7 +1,9 @@
 package Principal;
 
 import Entidades.Alumno;
+import Entidades.Materia;
 import Persistencia.AlumnoData;
+import Persistencia.MateriaData;
 import Persistencia.MiConexion;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -14,6 +16,7 @@ public class GP6_Universidad {
 
             MiConexion conexion = new MiConexion(); //Instanciar objeto MiConexion para usarlo en el metodo de AlumnoData
             AlumnoData alu = new AlumnoData(conexion); //Se instancia un objeto AlumnoData que inicializa el metodo buscarConexion
+            MateriaData md = new MateriaData(conexion);
 
             /* CARGA DE ALUMNOS */
 //            Alumno luciano = new Alumno(42239994, "Luciano", LocalDate.of(1999, 11, 21), true);
@@ -29,10 +32,14 @@ public class GP6_Universidad {
 //            alu.guardarAlumno(martin);   
 //            
 //            Alumno roman = new Alumno(47318814, "Roman", LocalDate.of(2006, 6, 29), true);
-//            alu.guardarAlumno(roman); 
-
+//            alu.guardarAlumno(roman);
 //            Alumno cami = new Alumno(42220747, "Cami", LocalDate.of(1999, 11, 10), true);
-//           alu.guardarAlumno(cami); 
+//            alu.guardarAlumno(cami);
+
+            /* CARGA DE MATERIAS */
+            Materia matematica = new Materia("Matemáticas", true);
+            md.guardarMateria(matematica);
+
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Error de conexion" + ex.getMessage());
         } catch (ClassNotFoundException cargar) {
