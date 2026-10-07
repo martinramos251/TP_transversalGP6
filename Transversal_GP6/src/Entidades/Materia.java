@@ -30,8 +30,13 @@ public class Materia {
         this.nombre = nombre;
     }
 
-    public boolean isEstado() {
+    public boolean getEstado() {
         return estado;
+    }
+
+    @Override
+    public String toString() {
+        return "Materia{" + "idMateria=" + idMateria + ", nombre=" + nombre + ", estado=" + estado + '}';
     }
 
     public void setEstado(boolean estado) {
