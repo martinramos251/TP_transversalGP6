@@ -39,10 +39,8 @@ public class GP6_Universidad {
             /* CARGA DE MATERIAS */
             //Materia lengua = new Materia("Lengua", true);
             //md.guardarMateria(lengua);
-
             //Dar de alta o baja
             //alu.altaBajaLogica(18, false);
-            
             System.out.println(md.buscarMateria(1));
 
         } catch (SQLException ex) {
