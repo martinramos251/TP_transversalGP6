@@ -35,13 +35,20 @@ public class GP6_Universidad {
 //            alu.guardarAlumno(roman);
 //            Alumno cami = new Alumno(42220747, "Cami", LocalDate.of(1999, 11, 10), true);
 //            alu.guardarAlumno(cami);
-
-            /* CARGA DE MATERIAS */
-            //Materia lengua = new Materia("Lengua", true);
-            //md.guardarMateria(lengua);
-            //Dar de alta o baja
-            //alu.altaBajaLogica(18, false);
-            System.out.println(md.buscarMateria(1));
+//
+//            /* CARGA DE MATERIAS */
+//            Materia lengua = new Materia("Lengua", true);
+//            md.guardarMateria(lengua);
+//            Dar de alta o baja
+//            alu.altaBajaLogica(18, false);
+//            PRUEBA DE METODOS DE MATERIADATA
+//             Materia fisica = md.buscarMateria(2);
+//             fisica.setNombre("Fisica");
+////             md.guardarMateria(matematicas);
+//             md.actualizarMateria(fisica);
+//            md.borrarMateria(2);
+            md.altaBajaLogica(1, false);
+            System.out.println(md.listarMaterias());
 
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Error de conexion" + ex.getMessage());

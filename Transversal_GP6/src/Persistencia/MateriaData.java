@@ -78,10 +78,11 @@ public class MateriaData {
     }
 
     public void actualizarMateria(Materia m) {
-        String sql = "UPDATE materia SET nombre = ?, estado = ?";
+        String sql = "UPDATE materia SET nombre = ?, estado = ? WHERE idMateria = ?" ;
         try (PreparedStatement ps = conect.prepareStatement(sql)) {
             ps.setString(1, m.getNombre());
             ps.setBoolean(2, m.getEstado());
+            ps.setInt(3, m.getIdMateria());
             ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println("No se pudo actualizar la materia");
