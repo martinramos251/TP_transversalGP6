@@ -6,15 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AlumnoData {
+    private Connection conect;
 
-    private Connection conect = null;
-
-    public AlumnoData() {
+    public AlumnoData() throws SQLException, ClassNotFoundException {
+        conect = MiConexion.buscarConexion();
     }   
-    
-    public AlumnoData(MiConexion conexion) throws SQLException, ClassNotFoundException {
-        this.conect = conexion.buscarConexion();
-    }
 
     public void guardarAlumno(Alumno a) {
         String sql = "INSERT INTO alumno (dni, nombre, fechaNac, activo) VALUES (?,?,?,?)";

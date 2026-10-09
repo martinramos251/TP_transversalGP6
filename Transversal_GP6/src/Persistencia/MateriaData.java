@@ -10,15 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MateriaData {
+    private Connection conect;
 
-    private Connection conect = null;
-
-    public MateriaData() {
+    public MateriaData() throws SQLException, ClassNotFoundException {
+        conect = MiConexion.buscarConexion();
     }
 
-    public MateriaData(MiConexion conexion) throws SQLException, ClassNotFoundException {
-        conect = conexion.buscarConexion();
-    }
 
     public void guardarMateria(Materia m) {
         String sql = "INSERT INTO materia (nombre, estado) VALUES (?,?)";
