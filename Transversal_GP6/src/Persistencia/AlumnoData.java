@@ -25,11 +25,11 @@ public class AlumnoData {
             if (rs.next()) {
                 a.setIdAlumno(rs.getInt(1));
             } else {
-                System.out.println("No se pudo obtener ID");
+                System.out.println("No se pudo obtener el ID");
             }
-            System.out.println("Guardado!");
+            System.out.println("Alumno guardado!");
         } catch (SQLException ex) {
-            System.out.println("No se pudo insertar");
+            System.out.println("No se pudo insertar el alumno");
         }
     }
 

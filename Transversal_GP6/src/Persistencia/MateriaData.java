@@ -33,7 +33,7 @@ public class MateriaData {
 
             System.out.println("Materia guardada!");
         } catch (SQLException ex) {
-            System.out.println("No se pudo insertar");
+            System.out.println("No se pudo insertar la materia");
         }
     }
 

@@ -1,12 +1,11 @@
 package Entidades;
 
 public class Cursada {
-
+    
     private int idCursada;
     private Alumno alumno;
     private Materia materia;
     private float nota;
-
 
     public Cursada() {
     }
