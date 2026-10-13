@@ -56,7 +56,7 @@ public class GP6_Universidad {
 //            md.borrarMateria(2);
 //            md.altaBajaLogica(1, false);
 //           System.out.println(md.listarMaterias());
-            Cursada cursa = new Cursada(alu.buscarAlumno(21), md.buscarMateria(2), 8);
+            Cursada cursa = new Cursada(luciano, lengua, 8);
             cd.inscribirAlumnoMateria(cursa);
 
 

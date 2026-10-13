@@ -30,7 +30,6 @@ public class CursadaData {
         } catch (SQLException ex) {
             System.out.println("No se pudo insertar");
         }
-    
     }
     
     //Obtener inscripciones de todos los alumnos.
