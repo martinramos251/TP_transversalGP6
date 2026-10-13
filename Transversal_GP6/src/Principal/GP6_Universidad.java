@@ -25,7 +25,7 @@ public class GP6_Universidad {
             Alumno luciano = new Alumno(42239994, "Luciano", LocalDate.of(1999, 11, 21), true);
 //            Alumno luciano = alu.buscarAlumno(21); 
 //            alu.guardarAlumno(luciano);
-            luciano.setIdAlumno(alu.buscarAlumno(21).getIdAlumno());
+//            luciano.setIdAlumno(alu.buscarAlumno(21).getIdAlumno());
 //
 //            Alumno franco = new Alumno(37640491, "Franco", LocalDate.of(1999, 11, 15), true);
 //           alu.guardarAlumno(franco);
@@ -40,24 +40,26 @@ public class GP6_Universidad {
 //            alu.guardarAlumno(roman);
 //            Alumno cami = new Alumno(42220747, "Cami", LocalDate.of(1999, 11, 10), true);
 //            alu.guardarAlumno(cami);
-//
-//            /* CARGA DE MATERIAS */
-            Materia lengua = new Materia("Lengua", true);
-//            Materia lenguaId = md.buscarMateria(2);
+
+            /* CARGA DE MATERIAS */
+//            Materia lengua = new Materia("Lengua", true);
+//           Materia lenguaId = md.buscarMateria(2);
 //            md.guardarMateria(lengua);
-            lengua.setIdMateria(md.buscarMateria(2).getIdMateria());
-//            Dar de alta o baja
-//            alu.altaBajaLogica(18, false);
-//            PRUEBA DE METODOS DE MATERIADATA
-//            Materia fisica = md.buscarMateria(2);
-//            fisica.setNombre("Fisica");
-//            md.guardarMateria(matematicas);
-//            md.actualizarMateria(fisica);
+//            lengua.setIdMateria(md.buscarMateria(2).getIdMateria());
+//          Dar de alta o baja
+//         alu.altaBajaLogica(18, false);
+//          PRUEBA DE METODOS DE MATERIADATA
+//          Materia fisica = md.buscarMateria(2);
+//          fisica.setNombre("Fisica");
+//          md.guardarMateria(matematicas);
+//           md.actualizarMateria(fisica);
 //            md.borrarMateria(2);
 //            md.altaBajaLogica(1, false);
 //           System.out.println(md.listarMaterias());
-            Cursada cursa = new Cursada(luciano, lengua, 8);
-            cd.inscribirAlumnoMateria(cursa);
+//          Cursada cursa = new Cursada(alu.buscarAlumno(4), md.buscarMateria(1), 7);
+//            cd.inscribirAlumnoMateria(cursa);
+//
+           System.out.println(cd.listarInscripciones());
 
 
         } catch (SQLException ex) {

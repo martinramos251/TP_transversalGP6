@@ -1,18 +1,22 @@
 package Persistencia;
-
+import Entidades.Alumno;
 import Entidades.Cursada;
+import Entidades.Materia;
 import java.sql.Connection;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CursadaData {
+
     private Connection conect;
 
     public CursadaData() throws SQLException, ClassNotFoundException {
         conect = MiConexion.buscarConexion();
     }
-    
+
     //Inscribe un alumno a una materia
-    public void inscribirAlumnoMateria(Cursada c){
+    public void inscribirAlumnoMateria(Cursada c) {
         String sql = "INSERT INTO cursada (idAlumno, idMateria, nota) VALUES (?,?,?)";
         try (PreparedStatement ps = conect.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, c.getAlumno().getIdAlumno());
@@ -32,7 +36,34 @@ public class CursadaData {
         }
     }
     
+
     //Obtener inscripciones de todos los alumnos.
+    public List<Cursada> listarInscripciones() throws SQLException, ClassNotFoundException {
+        Cursada c = null;
+        Alumno a = null;
+        Materia m = null;
+        AlumnoData ad = new AlumnoData();
+        MateriaData md = new MateriaData();
+        ArrayList<Cursada> listaCursada = new ArrayList<>();
+        String sql = "SELECT * FROM cursada";
+        try (PreparedStatement ps = conect.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                c = new Cursada();
+                c.setIdCursada(rs.getInt(1));
+                
+                c.setAlumno(ad.buscarAlumno(rs.getInt(2)));
+                c.setMateria(md.buscarMateria(rs.getInt(3)));
+                c.setNota(rs.getFloat("nota"));
+                
+                listaCursada.add(c);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al hacer la consulta");
+        }
+        return listaCursada;
+    }
+
     //Obtener inscripcion registradas de un alumno en el cuatrimestre y en el anio.
     //Obtener las materias en las que un alumno SI esta inscripto.
     //Obtener las materias en las que un alumno NO esta inscripto.
