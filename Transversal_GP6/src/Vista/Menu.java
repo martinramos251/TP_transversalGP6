@@ -15,8 +15,9 @@ public class Menu extends javax.swing.JFrame {
         JMarchivo = new javax.swing.JMenu();
         JMIsalir = new javax.swing.JMenuItem();
         JMalumnos = new javax.swing.JMenu();
-        JMI_formulario = new javax.swing.JMenuItem();
-        JMI_inscribir = new javax.swing.JMenuItem();
+        JMIformularioAlumno = new javax.swing.JMenuItem();
+        JMIformularioMateria = new javax.swing.JMenuItem();
+        JMIinscribir = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Sistema de Gestión (SGULP)");
@@ -44,28 +45,36 @@ public class Menu extends javax.swing.JFrame {
 
         JMenuBarra.add(JMarchivo);
 
-        JMalumnos.setText("Alumnos");
+        JMalumnos.setText("Menu");
         JMalumnos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JMalumnosActionPerformed(evt);
             }
         });
 
-        JMI_formulario.setText("Formulario de Alumnos");
-        JMI_formulario.addActionListener(new java.awt.event.ActionListener() {
+        JMIformularioAlumno.setText("Formulario de Alumnos");
+        JMIformularioAlumno.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JMI_formularioActionPerformed(evt);
+                JMIformularioAlumnoActionPerformed(evt);
             }
         });
-        JMalumnos.add(JMI_formulario);
+        JMalumnos.add(JMIformularioAlumno);
 
-        JMI_inscribir.setText("Inscribir a materia");
-        JMI_inscribir.addActionListener(new java.awt.event.ActionListener() {
+        JMIformularioMateria.setText("Formulario de Materias");
+        JMIformularioMateria.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JMI_inscribirActionPerformed(evt);
+                JMIformularioMateriaActionPerformed(evt);
             }
         });
-        JMalumnos.add(JMI_inscribir);
+        JMalumnos.add(JMIformularioMateria);
+
+        JMIinscribir.setText("Inscribir a materia");
+        JMIinscribir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JMIinscribirActionPerformed(evt);
+            }
+        });
+        JMalumnos.add(JMIinscribir);
 
         JMenuBarra.add(JMalumnos);
 
@@ -93,23 +102,32 @@ public class Menu extends javax.swing.JFrame {
 
     }//GEN-LAST:event_JMalumnosActionPerformed
 
-    private void JMI_formularioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JMI_formularioActionPerformed
+    private void JMIformularioAlumnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JMIformularioAlumnoActionPerformed
         JDPescritorio.removeAll();
         JDPescritorio.repaint();
         FormularioAlumnos ventana = new FormularioAlumnos();
         ventana.setVisible(true);
         JDPescritorio.add(ventana);
         JDPescritorio.moveToFront(ventana);
-    }//GEN-LAST:event_JMI_formularioActionPerformed
+    }//GEN-LAST:event_JMIformularioAlumnoActionPerformed
 
-    private void JMI_inscribirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JMI_inscribirActionPerformed
+    private void JMIinscribirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JMIinscribirActionPerformed
         JDPescritorio.removeAll();
         JDPescritorio.repaint();
         InscribirMateria ventana = new InscribirMateria();
         ventana.setVisible(true);
         JDPescritorio.add(ventana);
         JDPescritorio.moveToFront(ventana);
-    }//GEN-LAST:event_JMI_inscribirActionPerformed
+    }//GEN-LAST:event_JMIinscribirActionPerformed
+
+    private void JMIformularioMateriaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JMIformularioMateriaActionPerformed
+        JDPescritorio.removeAll();
+        JDPescritorio.repaint();
+        FormularioMaterias ventana = new FormularioMaterias();
+        ventana.setVisible(true);
+        JDPescritorio.add(ventana);
+        JDPescritorio.moveToFront(ventana);
+    }//GEN-LAST:event_JMIformularioMateriaActionPerformed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -145,13 +163,14 @@ public class Menu extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane JDPescritorio;
-    private javax.swing.JMenuItem JMI_formulario;
-    private javax.swing.JMenuItem JMI_inscribir;
+    private javax.swing.JMenuItem JMIformularioAlumno;
+    private javax.swing.JMenuItem JMIformularioMateria;
+    private javax.swing.JMenuItem JMIinscribir;
     private javax.swing.JMenuItem JMIsalir;
     private javax.swing.JMenu JMalumnos;
     private javax.swing.JMenu JMarchivo;
     private javax.swing.JMenuBar JMenuBarra;
     // End of variables declaration//GEN-END:variables
 
-
+    
 }
