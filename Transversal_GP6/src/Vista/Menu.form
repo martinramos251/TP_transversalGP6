@@ -4,21 +4,6 @@
   <NonVisualComponents>
     <Menu class="javax.swing.JMenuBar" name="JMenuBarra">
       <SubComponents>
-        <Menu class="javax.swing.JMenu" name="JMarchivo">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Archivo"/>
-          </Properties>
-          <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="JMIsalir">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Salir"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JMIsalirActionPerformed"/>
-              </Events>
-            </MenuItem>
-          </SubComponents>
-        </Menu>
         <Menu class="javax.swing.JMenu" name="JMalumnos">
           <Properties>
             <Property name="text" type="java.lang.String" value="Menu"/>
@@ -45,10 +30,25 @@
             </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="JMIinscribir">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Inscribir a materia"/>
+                <Property name="text" type="java.lang.String" value="Inscribir alumno"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JMIinscribirActionPerformed"/>
+              </Events>
+            </MenuItem>
+          </SubComponents>
+        </Menu>
+        <Menu class="javax.swing.JMenu" name="JMadministrar">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Administrar"/>
+          </Properties>
+          <SubComponents>
+            <MenuItem class="javax.swing.JMenuItem" name="JMImateriasAlumno">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Ver materias de alumno"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JMImateriasAlumnoActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>

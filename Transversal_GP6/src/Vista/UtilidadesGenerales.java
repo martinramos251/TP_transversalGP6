@@ -14,6 +14,7 @@ public class UtilidadesGenerales {
         JComponent barra = ui.getNorthPane();
         ocultarFlechita(barra);
     }
+
     static void ocultarFlechita(Container contenedor) {
         for (Component componente : contenedor.getComponents()) {
             if (componente instanceof JButton) {
@@ -26,4 +27,3 @@ public class UtilidadesGenerales {
         }
     }
 }
-

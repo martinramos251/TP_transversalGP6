@@ -1,16 +1,33 @@
 package Vista;
 
-import java.awt.Component;
-import java.awt.Container;
-import javax.swing.JButton;
-import javax.swing.JComponent;
-import javax.swing.plaf.basic.BasicInternalFrameUI;
+import java.awt.Image;
+import javax.swing.ImageIcon;
+
+import javax.swing.table.DefaultTableModel;
 
 public class FormularioMaterias extends javax.swing.JInternalFrame {
-
+    
+    // Crea el modelo por default y sobrescribe el metodo de la clase para hacer que las celdas no sean editabes.
+    private DefaultTableModel modelo = new DefaultTableModel(){
+        @Override
+        public boolean isCellEditable(int f, int c){
+            return false;
+        }
+    };
+    
     public FormularioMaterias() {
         initComponents();
         UtilidadesGenerales.ocultarMenu(this);
+        cargarCabecera();
+        
+        //Redimensionar iconos con el metodo.
+        JBborrar.setIcon(redimensionIcon("/Imagen/eliminar.png", 25, 25));
+        JBactualizar.setIcon(redimensionIcon("/Imagen/actualizar.png", 25, 25));
+        JBlimpiar.setIcon(redimensionIcon("/Imagen/escoba.png", 25, 25));
+        JBbuscar.setIcon(redimensionIcon("/Imagen/buscar.png", 25, 25));
+        JBbuscarNombre.setIcon(redimensionIcon("/Imagen/buscar.png", 25, 25));
+        JBalta.setIcon(redimensionIcon("/Imagen/check.png", 25, 25));
+        JBbaja.setIcon(redimensionIcon("/Imagen/cruz.png", 25, 25));
     }
 
     @SuppressWarnings("unchecked")
@@ -19,7 +36,7 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
 
         JLinscripciones = new javax.swing.JLabel();
         JLactivo = new javax.swing.JLabel();
-        JCactivo = new javax.swing.JCheckBox();
+        JCestado = new javax.swing.JCheckBox();
         JBguardar = new javax.swing.JButton();
         JBborrar = new javax.swing.JButton();
         JBactualizar = new javax.swing.JButton();
@@ -28,16 +45,18 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
         JBbaja = new javax.swing.JButton();
         JLbuscarMateria = new javax.swing.JLabel();
         JPbuscar_id2 = new javax.swing.JPanel();
-        JPbuscar_id1 = new javax.swing.JPanel();
-        JLid1 = new javax.swing.JLabel();
-        JTFid1 = new javax.swing.JTextField();
-        JBbuscar1 = new javax.swing.JButton();
+        JPbuscar_nombre = new javax.swing.JPanel();
+        JLbuscarNombre = new javax.swing.JLabel();
+        JTFbuscarNombre = new javax.swing.JTextField();
+        JBbuscarNombre = new javax.swing.JButton();
         JPbuscar_id = new javax.swing.JPanel();
         JLid = new javax.swing.JLabel();
         JTFid = new javax.swing.JTextField();
         JBbuscar = new javax.swing.JButton();
         JTFnombre = new javax.swing.JTextField();
         JLnombre = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        JTmaterias = new javax.swing.JTable();
 
         setClosable(true);
         setIconifiable(true);
@@ -47,17 +66,19 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
         JLinscripciones.setText("Materias");
 
         JLactivo.setFont(new java.awt.Font("Dubai Medium", 1, 16)); // NOI18N
-        JLactivo.setText("Activa");
+        JLactivo.setText("Estado");
 
-        JCactivo.setVerticalAlignment(javax.swing.SwingConstants.TOP);
-        JCactivo.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
+        JCestado.setVerticalAlignment(javax.swing.SwingConstants.TOP);
+        JCestado.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
 
         JBguardar.setFont(new java.awt.Font("Dubai Medium", 1, 18)); // NOI18N
         JBguardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/guardar.png"))); // NOI18N
         JBguardar.setText("Guardar");
+        JBguardar.setEnabled(false);
 
         JBborrar.setFont(new java.awt.Font("Dubai Medium", 1, 12)); // NOI18N
         JBborrar.setText("Borrar");
+        JBborrar.setEnabled(false);
         JBborrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JBborrarActionPerformed(evt);
@@ -66,6 +87,7 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
 
         JBactualizar.setFont(new java.awt.Font("Dubai Medium", 1, 12)); // NOI18N
         JBactualizar.setText("Actualizar");
+        JBactualizar.setEnabled(false);
 
         JBlimpiar.setFont(new java.awt.Font("Dubai Medium", 1, 12)); // NOI18N
         JBlimpiar.setText("Limpiar");
@@ -86,41 +108,41 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
 
         JPbuscar_id2.setBorder(javax.swing.BorderFactory.createEtchedBorder(javax.swing.border.EtchedBorder.RAISED, new java.awt.Color(204, 204, 204), null));
 
-        JPbuscar_id1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        JPbuscar_nombre.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        JLid1.setFont(new java.awt.Font("Dubai Medium", 1, 16)); // NOI18N
-        JLid1.setText("ID");
+        JLbuscarNombre.setFont(new java.awt.Font("Dubai Medium", 1, 14)); // NOI18N
+        JLbuscarNombre.setText("NOMBRE");
 
-        JTFid1.addActionListener(new java.awt.event.ActionListener() {
+        JTFbuscarNombre.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JTFid1ActionPerformed(evt);
+                JTFbuscarNombreActionPerformed(evt);
             }
         });
 
-        JBbuscar1.setFont(new java.awt.Font("Dubai Light", 1, 14)); // NOI18N
-        JBbuscar1.setText("Buscar");
+        JBbuscarNombre.setFont(new java.awt.Font("Dubai Light", 1, 14)); // NOI18N
+        JBbuscarNombre.setText("Buscar");
 
-        javax.swing.GroupLayout JPbuscar_id1Layout = new javax.swing.GroupLayout(JPbuscar_id1);
-        JPbuscar_id1.setLayout(JPbuscar_id1Layout);
-        JPbuscar_id1Layout.setHorizontalGroup(
-            JPbuscar_id1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(JPbuscar_id1Layout.createSequentialGroup()
-                .addGap(23, 23, 23)
-                .addComponent(JLid1, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(JTFid1, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
-                .addGap(39, 39, 39)
-                .addComponent(JBbuscar1, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(32, 32, 32))
+        javax.swing.GroupLayout JPbuscar_nombreLayout = new javax.swing.GroupLayout(JPbuscar_nombre);
+        JPbuscar_nombre.setLayout(JPbuscar_nombreLayout);
+        JPbuscar_nombreLayout.setHorizontalGroup(
+            JPbuscar_nombreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(JPbuscar_nombreLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(JLbuscarNombre)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(JTFbuscarNombre, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(JBbuscarNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
-        JPbuscar_id1Layout.setVerticalGroup(
-            JPbuscar_id1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, JPbuscar_id1Layout.createSequentialGroup()
+        JPbuscar_nombreLayout.setVerticalGroup(
+            JPbuscar_nombreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, JPbuscar_nombreLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(JPbuscar_id1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(JLid1)
-                    .addComponent(JTFid1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(JBbuscar1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, Short.MAX_VALUE))
+                .addGroup(JPbuscar_nombreLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(JLbuscarNombre)
+                    .addComponent(JTFbuscarNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(JBbuscarNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 28, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -146,8 +168,8 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
                 .addGap(23, 23, 23)
                 .addComponent(JLid, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(JTFid, javax.swing.GroupLayout.DEFAULT_SIZE, 96, Short.MAX_VALUE)
-                .addGap(39, 39, 39)
+                .addComponent(JTFid, javax.swing.GroupLayout.DEFAULT_SIZE, 129, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(JBbuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(32, 32, 32))
         );
@@ -170,7 +192,7 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
                 .addGap(18, 18, 18)
                 .addComponent(JPbuscar_id, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(JPbuscar_id1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(JPbuscar_nombre, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(17, Short.MAX_VALUE))
         );
         JPbuscar_id2Layout.setVerticalGroup(
@@ -179,12 +201,25 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
                 .addGap(14, 14, 14)
                 .addGroup(JPbuscar_id2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(JPbuscar_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(JPbuscar_id1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(JPbuscar_nombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(14, Short.MAX_VALUE))
         );
 
         JLnombre.setFont(new java.awt.Font("Dubai Medium", 1, 16)); // NOI18N
         JLnombre.setText("NOMBRE:");
+
+        JTmaterias.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(JTmaterias);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -193,57 +228,62 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(378, 378, 378)
-                        .addComponent(JLinscripciones))
+                        .addGap(40, 40, 40)
+                        .addComponent(JPbuscar_id2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(342, 342, 342)
+                        .addComponent(JLbuscarMateria))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(48, 48, 48)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(JLactivo)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(JCactivo))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(JBguardar, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addComponent(JBbaja, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(JBalta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(JBborrar, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(JBactualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(JBlimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(357, 357, 357)
-                        .addComponent(JLbuscarMateria))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(60, 60, 60)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGap(96, 96, 96)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 576, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(JLnombre, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(JTFnombre, javax.swing.GroupLayout.PREFERRED_SIZE, 252, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(JPbuscar_id2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(69, Short.MAX_VALUE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(JLactivo)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(JBguardar, javax.swing.GroupLayout.PREFERRED_SIZE, 226, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(JBbaja, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(JBalta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                            .addComponent(JBborrar, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(JBactualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(JBlimpiar, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(JCestado)))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(365, 365, 365)
+                        .addComponent(JLinscripciones)))
+                .addContainerGap(55, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(12, 12, 12)
                 .addComponent(JLinscripciones)
-                .addGap(12, 12, 12)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(JLbuscarMateria, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(JPbuscar_id2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(31, 31, 31)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(JTFnombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(JLnombre, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 157, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(JLactivo)
-                    .addComponent(JCactivo))
-                .addGap(32, 32, 32)
+                    .addComponent(JCestado))
+                .addGap(27, 27, 27)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(1, 1, 1)
@@ -256,7 +296,7 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
                     .addComponent(JBguardar, javax.swing.GroupLayout.PREFERRED_SIZE, 86, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(JBbaja, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(48, 48, 48))
+                .addContainerGap(39, Short.MAX_VALUE))
         );
 
         pack();
@@ -274,9 +314,9 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_JTFidActionPerformed
 
-    private void JTFid1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JTFid1ActionPerformed
+    private void JTFbuscarNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JTFbuscarNombreActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_JTFid1ActionPerformed
+    }//GEN-LAST:event_JTFbuscarNombreActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -285,47 +325,52 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
     private javax.swing.JButton JBbaja;
     private javax.swing.JButton JBborrar;
     private javax.swing.JButton JBbuscar;
-    private javax.swing.JButton JBbuscar1;
+    private javax.swing.JButton JBbuscarNombre;
     private javax.swing.JButton JBguardar;
     private javax.swing.JButton JBlimpiar;
-    private javax.swing.JCheckBox JCactivo;
+    private javax.swing.JCheckBox JCestado;
     private javax.swing.JLabel JLactivo;
     private javax.swing.JLabel JLbuscarMateria;
+    private javax.swing.JLabel JLbuscarNombre;
     private javax.swing.JLabel JLid;
-    private javax.swing.JLabel JLid1;
     private javax.swing.JLabel JLinscripciones;
     private javax.swing.JLabel JLnombre;
     private javax.swing.JPanel JPbuscar_id;
-    private javax.swing.JPanel JPbuscar_id1;
     private javax.swing.JPanel JPbuscar_id2;
+    private javax.swing.JPanel JPbuscar_nombre;
+    private javax.swing.JTextField JTFbuscarNombre;
     private javax.swing.JTextField JTFid;
-    private javax.swing.JTextField JTFid1;
     private javax.swing.JTextField JTFnombre;
+    private javax.swing.JTable JTmaterias;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
-    
-    //Permiten ocultar la felchita que se encuentra cuando se abre el Internal Frame.
-    private static void ocultarFlechita(Container contenedor) {
-        for (Component componente : contenedor.getComponents()) {
-            if (componente instanceof JButton) {
-                componente.setVisible(false);
-                return;
-            }
+  
+    //Permite redimensionar a gusto las imagenes.
+    private ImageIcon redimensionIcon(String ruta, int ancho, int alto) {
+        ImageIcon icono = new ImageIcon(getClass().getResource(ruta));
+        Image imagen = icono.getImage();
+        Image imagenRedimensionada = imagen.getScaledInstance(ancho, alto, Image.SCALE_SMOOTH);
 
-            if (componente instanceof Container) {
-                ocultarFlechita((Container) componente);
-            }
-        }
+        return new ImageIcon(imagenRedimensionada);
     }
-    private void ocultarMenu() {
-        BasicInternalFrameUI ui = (BasicInternalFrameUI) this.getUI();
-        JComponent barra = ui.getNorthPane();
-        ocultarFlechita(barra);
-    }
-     
+    
     private void limpiar() {
         JTFid.setText("");
         JTFnombre.setText("");
-        JCactivo.setSelected(false);
-        //modelo.setRowCount(0);
+        JTFbuscarNombre.setText("");
+        JCestado.setSelected(false);
+        modelo.setRowCount(0);
+        JBguardar.setEnabled(false);
+        JBborrar.setEnabled(false);
+        JBactualizar.setEnabled(false);
+    }
+    
+    //Agrega las cabeceras a la tabla.
+    private void cargarCabecera() {
+        modelo.addColumn("idMateria");
+        modelo.addColumn("Nombre");
+        modelo.addColumn("Estado");
+
+        JTmaterias.setModel(modelo);
     }
 }
