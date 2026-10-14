@@ -4,16 +4,13 @@ import Entidades.Alumno;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class AlumnoData {
+    private Connection conect;
 
-    private Connection conect = null;
-
-    public AlumnoData(MiConexion conexion) throws SQLException, ClassNotFoundException {
-        this.conect = conexion.buscarConexion();
-    }
+    public AlumnoData() throws SQLException, ClassNotFoundException {
+        conect = MiConexion.buscarConexion();
+    }   
 
     public void guardarAlumno(Alumno a) {
         String sql = "INSERT INTO alumno (dni, nombre, fechaNac, activo) VALUES (?,?,?,?)";
@@ -28,17 +25,17 @@ public class AlumnoData {
             if (rs.next()) {
                 a.setIdAlumno(rs.getInt(1));
             } else {
-                System.out.println("No se pudo obtener ID");
+                System.out.println("No se pudo obtener el ID");
             }
-            System.out.println("Guardado!");
+            System.out.println("Alumno guardado!");
         } catch (SQLException ex) {
-            System.out.println("No se pudo insertar");
+            System.out.println("No se pudo insertar el alumno");
         }
     }
 
     public Alumno buscarAlumno(int id) {
         Alumno alumno = null;
-        String sql = "SELECT * FROM alumno WHERE idAlumno= ?";
+        String sql = "SELECT * FROM alumno WHERE idAlumno = ?";
 
         try (PreparedStatement ps = conect.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -70,7 +67,7 @@ public class AlumnoData {
                 alumno.setNombre(rs.getString("nombre"));
                 alumno.setFechaNac(rs.getDate("fechaNac").toLocalDate());
                 alumno.setActivo(rs.getBoolean("activo"));
-                listado.add(alumno); //Agrega c/alumno al array 
+                listado.add(alumno); //Agrega alumno al array 
             }
         } catch (SQLException ex) {
             System.out.println("No se pudo listar los alumnos");
@@ -90,26 +87,27 @@ public class AlumnoData {
             ps.executeUpdate();
 
         } catch (SQLException ex) {
-            Logger.getLogger(AlumnoData.class.getName()).log(Level.SEVERE, null, ex); //Registra el error que ocurrió en AlumnoData como un error grave. Null es porque no puimos un msje personalizado
+            System.out.println("No se pudo actualizar el alumno"); //Registra el error que ocurrió en AlumnoData como un error grave. Null es porque no puimos un msje personalizado
         }
     }
 
     public void borrarAlumno(int id) {
 
         String sql = "DELETE FROM alumno WHERE idAlumno = ?";
-        try (PreparedStatement ps = conect.prepareStatement(sql)) {//2
+        try (PreparedStatement ps = conect.prepareStatement(sql)) {
             ps.setInt(1, id);
-            ps.executeUpdate();     // 3
+            ps.executeUpdate();
 
         } catch (SQLException ex) {
-            Logger.getLogger(AlumnoData.class.getName()).log(Level.SEVERE, null, ex);
+            System.out.println("No se pudo eliminar el alumno");
         }
     }
 
     // Este Metodo/Procedimiento lo hacemos asi para reutilizar codigo
-    public void altaBajaLogica(int id, boolean activo) {
+    public void altaBajaLogica(int id, boolean status) {
         Alumno a = buscarAlumno(id); // Busco el alumno en la base
-        a.setActivo(activo); // Modifico el estado (para darle alta o baja) dependiendo lo que reciba por parametro
+        a.setActivo(status); // Modifico el estado (para darle alta o baja) dependiendo lo que reciba por parametro
         actualizarAlumno(a); // Actualiza en la base el estado del alumno que acabo de modificar 
+        System.out.println("Se actualizo el estado del alumno " + a.getNombre() + " a " + a.getActivo());
     }
 }

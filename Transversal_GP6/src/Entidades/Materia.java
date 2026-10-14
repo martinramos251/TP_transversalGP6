@@ -1,14 +1,15 @@
 package Entidades;
 
 public class Materia {
+
     int idMateria;
     String nombre;
-    String estado;
+    boolean estado;
 
     public Materia() {
     }
 
-    public Materia(String nombre, String estado) {
+    public Materia(String nombre, boolean estado) {
         this.nombre = nombre;
         this.estado = estado;
     }
@@ -29,12 +30,18 @@ public class Materia {
         this.nombre = nombre;
     }
 
-    public String getEstado() {
+    public boolean getEstado() {
         return estado;
     }
 
-    public void setEstado(String estado) {
+    @Override
+    public String toString() {
+        return "Materia{" + "idMateria=" + idMateria + ", nombre=" + nombre + ", estado=" + estado + '}';
+    }
+
+    public void setEstado(boolean estado) {
         this.estado = estado;
     }
-    
+
+   
 }
