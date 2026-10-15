@@ -59,8 +59,7 @@ public class GP6_Universidad {
 //         Cursada cursa = new Cursada(alu.buscarAlumno(3), md.buscarMateria(1), 7);
 //        cd.inscribirAlumnoMateria(cursa);
 //
-           System.out.println(cd.siInscripto(44954914));
-
+            System.out.println(cd.noInscripto(44954914));
 
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Error de conexion" + ex.getMessage());

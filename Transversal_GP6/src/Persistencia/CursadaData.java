@@ -65,19 +65,32 @@ public class CursadaData {
     }
 
     //Obtener las materias en las que un alumno SI esta inscripto.
-    public List<String> siInscripto(int dni) throws SQLException, ClassNotFoundException {
+    public List<Materia> siInscripto(int dni) throws SQLException, ClassNotFoundException {
         List<Cursada> listaInscripto = listarInscripciones();
-        List<String> materiasInscriptas = new ArrayList<>();
+        List<Materia> materiasInscriptas = new ArrayList<>();
         for (Cursada c : listaInscripto) {
             if (c.getAlumno().getDni() == dni) {
-                materiasInscriptas.add(c.getMateria().getNombre());
+                materiasInscriptas.add(c.getMateria());
             }
-
         }
         return materiasInscriptas;
-
     }
+
     //Obtener las materias en las que un alumno NO esta inscripto.
+    public List<Materia> noInscripto(int dni) throws SQLException, ClassNotFoundException {
+        MateriaData md = new MateriaData();
+        List<Materia> materiasInscriptas = siInscripto(dni);
+        List<Materia> totalMaterias = md.listarMaterias();
+        List<Materia> materiasNoInscriptas = new ArrayList<>();
+
+        for (Materia m : totalMaterias) {
+            if (!materiasInscriptas.contains(m)) {
+                materiasNoInscriptas.add(m);
+            }
+        }
+        return materiasNoInscriptas;
+    }
+    
     //Borrar la inscripcion de un alumno.
     //Actualizar a la ultima nota de cursada (obtener).
     //Mostrar historial de notas de la cursada, de una materia en especifico.

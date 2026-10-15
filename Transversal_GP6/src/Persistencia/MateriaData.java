@@ -10,12 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MateriaData {
+
     private Connection conect;
 
     public MateriaData() throws SQLException, ClassNotFoundException {
         conect = MiConexion.buscarConexion();
     }
-
 
     public void guardarMateria(Materia m) {
         String sql = "INSERT INTO materia (nombre, estado) VALUES (?,?)";
@@ -75,7 +75,7 @@ public class MateriaData {
     }
 
     public void actualizarMateria(Materia m) {
-        String sql = "UPDATE materia SET nombre = ?, estado = ? WHERE idMateria = ?" ;
+        String sql = "UPDATE materia SET nombre = ?, estado = ? WHERE idMateria = ?";
         try (PreparedStatement ps = conect.prepareStatement(sql)) {
             ps.setString(1, m.getNombre());
             ps.setBoolean(2, m.getEstado());
@@ -102,6 +102,6 @@ public class MateriaData {
         Materia m = buscarMateria(idMateria); // Busco el alumno en la base
         m.setEstado(estado); // Modifico el estado (para darle alta o baja) dependiendo lo que reciba por parametro
         actualizarMateria(m); // Actualiza en la base el estado del alumno que acabo de modificar 
-        System.out.println("Se actualizo el estado de la materia " + m.getNombre()+ " a " + m.getEstado());
+        System.out.println("Se actualizo el estado de la materia " + m.getNombre() + " a " + m.getEstado());
     }
 }
