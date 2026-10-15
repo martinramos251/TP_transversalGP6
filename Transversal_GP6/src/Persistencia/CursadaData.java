@@ -1,4 +1,5 @@
 package Persistencia;
+
 import Entidades.Alumno;
 import Entidades.Cursada;
 import Entidades.Materia;
@@ -35,7 +36,6 @@ public class CursadaData {
             System.out.println("No se pudo insertar");
         }
     }
-    
 
     //Obtener inscripciones de todos los alumnos.
     public List<Cursada> listarInscripciones() throws SQLException, ClassNotFoundException {
@@ -51,11 +51,11 @@ public class CursadaData {
             while (rs.next()) {
                 c = new Cursada();
                 c.setIdCursada(rs.getInt(1));
-                
+
                 c.setAlumno(ad.buscarAlumno(rs.getInt(2)));
                 c.setMateria(md.buscarMateria(rs.getInt(3)));
                 c.setNota(rs.getFloat("nota"));
-                
+
                 listaCursada.add(c);
             }
         } catch (SQLException e) {
@@ -64,8 +64,19 @@ public class CursadaData {
         return listaCursada;
     }
 
-    //Obtener inscripcion registradas de un alumno en el cuatrimestre y en el anio.
     //Obtener las materias en las que un alumno SI esta inscripto.
+    public List<String> siInscripto(int dni) throws SQLException, ClassNotFoundException {
+        List<Cursada> listaInscripto = listarInscripciones();
+        List<String> materiasInscriptas = new ArrayList<>();
+        for (Cursada c : listaInscripto) {
+            if (c.getAlumno().getDni() == dni) {
+                materiasInscriptas.add(c.getMateria().getNombre());
+            }
+
+        }
+        return materiasInscriptas;
+
+    }
     //Obtener las materias en las que un alumno NO esta inscripto.
     //Borrar la inscripcion de un alumno.
     //Actualizar a la ultima nota de cursada (obtener).

@@ -22,7 +22,7 @@ public class GP6_Universidad {
             CursadaData cd = new CursadaData(); //Se instancia un objeto CursadaData que inicializa el metodo buscarConexion
 
             /* CARGA DE ALUMNOS */
-            Alumno luciano = new Alumno(42239994, "Luciano", LocalDate.of(1999, 11, 21), true);
+//            Alumno luciano = new Alumno(42239994, "Luciano", LocalDate.of(1999, 11, 21), true);
 //            Alumno luciano = alu.buscarAlumno(21); 
 //            alu.guardarAlumno(luciano);
 //            luciano.setIdAlumno(alu.buscarAlumno(21).getIdAlumno());
@@ -56,10 +56,10 @@ public class GP6_Universidad {
 //            md.borrarMateria(2);
 //            md.altaBajaLogica(1, false);
 //           System.out.println(md.listarMaterias());
-//          Cursada cursa = new Cursada(alu.buscarAlumno(4), md.buscarMateria(1), 7);
-//            cd.inscribirAlumnoMateria(cursa);
+//         Cursada cursa = new Cursada(alu.buscarAlumno(3), md.buscarMateria(1), 7);
+//        cd.inscribirAlumnoMateria(cursa);
 //
-           System.out.println(cd.listarInscripciones());
+           System.out.println(cd.siInscripto(44954914));
 
 
         } catch (SQLException ex) {
