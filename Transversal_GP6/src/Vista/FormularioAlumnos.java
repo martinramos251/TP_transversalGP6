@@ -1,12 +1,18 @@
 package Vista;
 
+import Entidades.Alumno;
+import Persistencia.AlumnoData;
 import java.awt.Image;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class FormularioAlumnos extends javax.swing.JInternalFrame {
-    
     // Crea el modelo por default y sobrescribe el metodo de la clase para hacer que las celdas no sean editabes.
     private DefaultTableModel modelo = new DefaultTableModel(){
         @Override
@@ -14,32 +20,57 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
             return false;
         }
     };
+    
+    //Creacion de un objeto AlumnoData y el ArrayList donde estaran todos los alumnos.
+    AlumnoData ad;
+    List<Alumno> allAlumnos = new ArrayList<>();
 
     public FormularioAlumnos() {
         initComponents();
         UtilidadesGenerales.ocultarMenu(this);
         
+        //Este conjunto permite que solo se pueda buscar alumnos por sola una opcion (id o dni).
+        JRBid.setSelected(true);
+        BGbuscar.add(JRBid);
+        BGbuscar.add(JRBdni);
+        JTFbuscarDni.setEnabled(false);
+        
+        //Inicializa el objeto de tipo AlumnoData y carga el ArrayList de alumnos.
+        try {
+            ad = new AlumnoData();
+            allAlumnos = ad.listarAlumnos();
+        } catch (ClassNotFoundException ex) {
+            System.out.println("aaa");
+        } catch (SQLException ex){
+            System.out.println("ssss");
+        }
+        
+        mostrarLista();
         cargarCabecera();
+        cargarDatos();
         
         //Redimensionar iconos con el metodo.
         JBborrar.setIcon(redimensionIcon("/Imagen/eliminar.png", 25, 25));
         JBactualizar.setIcon(redimensionIcon("/Imagen/actualizar.png", 25, 25));
         JBlimpiar.setIcon(redimensionIcon("/Imagen/escoba.png", 25, 25));
-        JBbuscarId.setIcon(redimensionIcon("/Imagen/buscar.png", 25, 25));
-        JBbuscarDni.setIcon(redimensionIcon("/Imagen/buscar.png", 25, 25));
         JBalta.setIcon(redimensionIcon("/Imagen/check.png", 25, 25));
         JBbaja.setIcon(redimensionIcon("/Imagen/cruz.png", 25, 25));
     }
-
+           
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        BGbuscar = new javax.swing.ButtonGroup();
         JLalumnos = new javax.swing.JLabel();
         JPbuscar_id = new javax.swing.JPanel();
         JLid = new javax.swing.JLabel();
+        JRBid = new javax.swing.JRadioButton();
         JTFid = new javax.swing.JTextField();
-        JBbuscarId = new javax.swing.JButton();
+        JLbuscarAlumnos = new javax.swing.JLabel();
+        JLbuscarDni = new javax.swing.JLabel();
+        JTFbuscarDni = new javax.swing.JTextField();
+        JRBdni = new javax.swing.JRadioButton();
         JLnombre = new javax.swing.JLabel();
         JTFnombre = new javax.swing.JTextField();
         JLfechaNac = new javax.swing.JLabel();
@@ -54,11 +85,6 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         JBbaja = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         JTalumnos = new javax.swing.JTable();
-        JLbuscarAlumnos = new javax.swing.JLabel();
-        JPbuscar_dni = new javax.swing.JPanel();
-        JLbuscarDni = new javax.swing.JLabel();
-        JTFbuscarDni = new javax.swing.JTextField();
-        JBbuscarDni = new javax.swing.JButton();
         JLdni = new javax.swing.JLabel();
         JTFdni = new javax.swing.JTextField();
 
@@ -79,36 +105,84 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         JLid.setFont(new java.awt.Font("Dubai Medium", 1, 16)); // NOI18N
         JLid.setText("ID");
 
+        JRBid.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JRBidActionPerformed(evt);
+            }
+        });
+
         JTFid.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JTFidActionPerformed(evt);
             }
         });
+        JTFid.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                JTFidKeyReleased(evt);
+            }
+        });
 
-        JBbuscarId.setFont(new java.awt.Font("Dubai Light", 1, 14)); // NOI18N
-        JBbuscarId.setText("Buscar");
+        JLbuscarAlumnos.setFont(new java.awt.Font("Dubai Medium", 1, 18)); // NOI18N
+        JLbuscarAlumnos.setText("Buscar Alumno: ");
+
+        JLbuscarDni.setFont(new java.awt.Font("Dubai Medium", 1, 16)); // NOI18N
+        JLbuscarDni.setText("DNI");
+
+        JTFbuscarDni.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JTFbuscarDniActionPerformed(evt);
+            }
+        });
+        JTFbuscarDni.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                JTFbuscarDniKeyPressed(evt);
+            }
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                JTFbuscarDniKeyReleased(evt);
+            }
+        });
+
+        JRBdni.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JRBdniActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout JPbuscar_idLayout = new javax.swing.GroupLayout(JPbuscar_id);
         JPbuscar_id.setLayout(JPbuscar_idLayout);
         JPbuscar_idLayout.setHorizontalGroup(
             JPbuscar_idLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(JPbuscar_idLayout.createSequentialGroup()
-                .addGap(23, 23, 23)
+                .addContainerGap()
+                .addComponent(JLbuscarAlumnos)
+                .addGap(12, 12, 12)
                 .addComponent(JLid, javax.swing.GroupLayout.PREFERRED_SIZE, 17, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(JTFid, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(JBbuscarId, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(JTFid, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(JRBid)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                .addComponent(JLbuscarDni)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(JTFbuscarDni, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(JRBdni)
+                .addGap(18, 18, 18))
         );
         JPbuscar_idLayout.setVerticalGroup(
             JPbuscar_idLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, JPbuscar_idLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(JPbuscar_idLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(JLid)
-                    .addComponent(JTFid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(JBbuscarId, javax.swing.GroupLayout.PREFERRED_SIZE, 28, Short.MAX_VALUE))
+                .addGroup(JPbuscar_idLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(JRBdni)
+                    .addGroup(JPbuscar_idLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(JLbuscarDni)
+                        .addComponent(JTFbuscarDni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(JPbuscar_idLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(JLid)
+                        .addComponent(JTFid, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(JLbuscarAlumnos, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(JRBid))
                 .addContainerGap())
         );
 
@@ -172,48 +246,12 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane2.setViewportView(JTalumnos);
-
-        JLbuscarAlumnos.setFont(new java.awt.Font("Dubai Medium", 1, 18)); // NOI18N
-        JLbuscarAlumnos.setText("Buscar Alumno");
-
-        JPbuscar_dni.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        JLbuscarDni.setFont(new java.awt.Font("Dubai Medium", 1, 16)); // NOI18N
-        JLbuscarDni.setText("DNI");
-
-        JTFbuscarDni.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JTFbuscarDniActionPerformed(evt);
+        JTalumnos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                JTalumnosMouseClicked(evt);
             }
         });
-
-        JBbuscarDni.setFont(new java.awt.Font("Dubai Light", 1, 14)); // NOI18N
-        JBbuscarDni.setText("Buscar");
-
-        javax.swing.GroupLayout JPbuscar_dniLayout = new javax.swing.GroupLayout(JPbuscar_dni);
-        JPbuscar_dni.setLayout(JPbuscar_dniLayout);
-        JPbuscar_dniLayout.setHorizontalGroup(
-            JPbuscar_dniLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(JPbuscar_dniLayout.createSequentialGroup()
-                .addGap(11, 11, 11)
-                .addComponent(JLbuscarDni)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(JTFbuscarDni, javax.swing.GroupLayout.DEFAULT_SIZE, 123, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(JBbuscarDni, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(26, 26, 26))
-        );
-        JPbuscar_dniLayout.setVerticalGroup(
-            JPbuscar_dniLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, JPbuscar_dniLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(JPbuscar_dniLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(JLbuscarDni)
-                    .addComponent(JTFbuscarDni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(JBbuscarDni, javax.swing.GroupLayout.PREFERRED_SIZE, 28, Short.MAX_VALUE))
-                .addContainerGap())
-        );
+        jScrollPane2.setViewportView(JTalumnos);
 
         JLdni.setFont(new java.awt.Font("Dubai Medium", 1, 16)); // NOI18N
         JLdni.setText("DNI:");
@@ -224,6 +262,9 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(334, 334, 334)
+                        .addComponent(JLalumnos))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(56, 56, 56)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -246,40 +287,26 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
                                 .addComponent(JLfechaNac)
                                 .addGap(18, 18, 18)
                                 .addComponent(JDCfechaNac, javax.swing.GroupLayout.PREFERRED_SIZE, 216, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(JLnombre, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(JTFnombre, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(JLdni, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(JTFdni, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(128, 128, 128))
-                                .addGroup(layout.createSequentialGroup()
-                                    .addComponent(JPbuscar_id, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(28, 28, 28)
-                                    .addComponent(JPbuscar_dni, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 712, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(334, 334, 334)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(JLalumnos)
-                            .addComponent(JLbuscarAlumnos))))
-                .addGap(46, 46, 46))
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 712, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(JLnombre, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(JTFnombre, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(61, 61, 61)
+                                .addComponent(JLdni, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(JTFdni, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(JPbuscar_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(46, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(16, 16, 16)
                 .addComponent(JLalumnos)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(JLbuscarAlumnos, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(JPbuscar_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(JPbuscar_dni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27)
+                .addGap(29, 29, 29)
+                .addComponent(JPbuscar_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(50, 50, 50)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(JTFdni, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(JLdni, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -308,7 +335,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
                 .addComponent(JBbaja, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(29, 29, 29)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(42, Short.MAX_VALUE))
+                .addContainerGap(37, Short.MAX_VALUE))
         );
 
         pack();
@@ -343,14 +370,72 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_JTFbuscarDniActionPerformed
 
+    private void JTalumnosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JTalumnosMouseClicked
+        int filaSelected = JTalumnos.getSelectedRow();
+        if(filaSelected != -1){
+            int dni = (int) JTalumnos.getValueAt(filaSelected, 1);
+            String nombre = (String) JTalumnos.getValueAt(filaSelected, 2);
+            LocalDate fechaNacimiento = (LocalDate) JTalumnos.getValueAt(filaSelected, 3);
+            boolean activo = (boolean) JTalumnos.getValueAt(filaSelected, 4);
+            Date fechaNac = Date.valueOf(fechaNacimiento);
+            
+            JTFdni.setText(dni + "");
+            JTFnombre.setText(nombre);
+            JDCfechaNac.setDate(fechaNac);
+            JCactivo.setSelected(activo);
+        }
+        JBborrar.setEnabled(true);
+        JBactualizar.setEnabled(true);
+    }//GEN-LAST:event_JTalumnosMouseClicked
+
+    private void JTFbuscarDniKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTFbuscarDniKeyReleased
+        borrarFilas();
+        for (Alumno a : allAlumnos) {
+            String dni = String.valueOf(a.getDni());
+            if (dni.startsWith(JTFbuscarDni.getText())) {
+                modelo.addRow(new Object[]{a.getIdAlumno(), a.getDni(), a.getNombre(), a.getFechaNac(), a.getActivo()});
+            }
+        }
+    }//GEN-LAST:event_JTFbuscarDniKeyReleased
+
+    private void JTFbuscarDniKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTFbuscarDniKeyPressed
+
+    }//GEN-LAST:event_JTFbuscarDniKeyPressed
+
+    private void JTFidKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTFidKeyReleased
+        borrarFilas();
+        for (Alumno a : allAlumnos) {
+            String id = String.valueOf(a.getIdAlumno());
+            if (id.startsWith(JTFid.getText())) {
+                modelo.addRow(new Object[]{a.getIdAlumno(), a.getDni(), a.getNombre(), a.getFechaNac(), a.getActivo()});
+            }
+        }
+    }//GEN-LAST:event_JTFidKeyReleased
+
+    private void JRBdniActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRBdniActionPerformed
+        JTFid.setEnabled(false);
+        JTFbuscarDni.setEnabled(true);
+        JTFid.setText("");
+        borrarFilas();
+        cargarDatos();
+    }//GEN-LAST:event_JRBdniActionPerformed
+
+    private void JRBidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRBidActionPerformed
+        borrarFilas();
+        JTFid.setEnabled(true);
+        JTFbuscarDni.setEnabled(false);
+        JTFbuscarDni.setText("");
+        borrarFilas();
+        cargarDatos();
+    }//GEN-LAST:event_JRBidActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup BGbuscar;
     private javax.swing.JButton JBactualizar;
     private javax.swing.JButton JBalta;
     private javax.swing.JButton JBbaja;
     private javax.swing.JButton JBborrar;
-    private javax.swing.JButton JBbuscarDni;
-    private javax.swing.JButton JBbuscarId;
     private javax.swing.JButton JBguardar;
     private javax.swing.JButton JBlimpiar;
     private javax.swing.JCheckBox JCactivo;
@@ -363,8 +448,9 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
     private javax.swing.JLabel JLfechaNac;
     private javax.swing.JLabel JLid;
     private javax.swing.JLabel JLnombre;
-    private javax.swing.JPanel JPbuscar_dni;
     private javax.swing.JPanel JPbuscar_id;
+    private javax.swing.JRadioButton JRBdni;
+    private javax.swing.JRadioButton JRBid;
     private javax.swing.JTextField JTFbuscarDni;
     private javax.swing.JTextField JTFdni;
     private javax.swing.JTextField JTFid;
@@ -382,7 +468,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         return new ImageIcon(imagenRedimensionada);
     }
     
-    //Vacia todos los campos.
+    //Vacia/restablece todos los campos.
     private void limpiar() {
         JTFid.setText("");
         JTFdni.setText("");
@@ -391,19 +477,38 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         JDCfechaNac.setDate(null);
         JCactivo.setSelected(false);
         modelo.setRowCount(0);
+        cargarDatos();
         JBguardar.setEnabled(false);
         JBborrar.setEnabled(false);
         JBactualizar.setEnabled(false);
     }
     
-    //Agrega las cabeceras a la tabla.
+    //Agrega las cabeceras a la tabla con sus respectivos nombres.
     private void cargarCabecera() {
         modelo.addColumn("idAlumno");
         modelo.addColumn("Dni");
         modelo.addColumn("Nombre");
-        modelo.addColumn("Fecha_Nacimiento");
+        modelo.addColumn("FechaNacimiento");
         modelo.addColumn("Activo");
 
         JTalumnos.setModel(modelo);
+    }
+    
+    private void mostrarLista(){
+        System.out.println(allAlumnos);
+    }
+    
+    //Carga los alumnos a la tabla.
+    private void cargarDatos() {
+        for (Alumno a : allAlumnos) {
+            modelo.addRow(new Object[]{a.getIdAlumno(), a.getDni(), a.getNombre(), a.getFechaNac(), a.getActivo()});
+        }
+    }
+    
+    private void borrarFilas(){
+        int filas = JTalumnos.getRowCount() -1;
+        for (int f = filas; f >= 0; f--) {
+            modelo.removeRow(f);
+        }
     }
 }

@@ -354,6 +354,7 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
         return new ImageIcon(imagenRedimensionada);
     }
     
+    //Vacia/restablece todos los campos.
     private void limpiar() {
         JTFid.setText("");
         JTFnombre.setText("");
@@ -365,7 +366,7 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
         JBactualizar.setEnabled(false);
     }
     
-    //Agrega las cabeceras a la tabla.
+    //Agrega las cabeceras a la tabla con sus respectivos nombres.
     private void cargarCabecera() {
         modelo.addColumn("idMateria");
         modelo.addColumn("Nombre");
