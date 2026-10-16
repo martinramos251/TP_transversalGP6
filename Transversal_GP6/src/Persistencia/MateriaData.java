@@ -55,6 +55,24 @@ public class MateriaData {
         return materia;
     }
 
+    public Materia buscarMateriaNombre(String nombre) {
+        Materia materia = null;
+        String sql = "SELECT * FROM materia WHERE nombre = ?";
+        try (PreparedStatement ps = conect.prepareStatement(sql)) {
+            ps.setString(1, nombre);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                materia = new Materia();
+                materia.setIdMateria(rs.getInt("idMateria"));
+                materia.setNombre(rs.getString("nombre"));
+                materia.setEstado(rs.getBoolean("estado"));
+            }
+        } catch (SQLException e) {
+            System.out.println("No se pudo hacer la consulta");
+        }
+        return materia;
+    }
+
     public List<Materia> listarMaterias() {
         Materia materia = null;
         ArrayList<Materia> listaMateria = new ArrayList<>();

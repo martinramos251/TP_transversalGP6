@@ -90,9 +90,45 @@ public class CursadaData {
         }
         return materiasNoInscriptas;
     }
-    
+
     //Borrar la inscripcion de un alumno.
+    public void borrarInscripcion(int dni, String nombreMateria) throws SQLException, ClassNotFoundException {
+
+        AlumnoData ad = new AlumnoData();
+        Alumno a = ad.buscarAlumnoDni(dni);
+
+        MateriaData md = new MateriaData();
+        Materia m = md.buscarMateriaNombre(nombreMateria);
+
+        String sql = "DELETE FROM cursada WHERE idMateria = ? AND idAlumno = ?";
+        try (PreparedStatement ps = conect.prepareStatement(sql)) {
+            ps.setInt(1, m.getIdMateria());
+            ps.setInt(2, a.getIdAlumno());
+
+            ps.executeUpdate();
+            
+            System.out.println("Cursada/inscripcion eliminada correctamente");
+        } catch (SQLException ex) {
+            System.out.println("No se pudo eliminar la cursada/inscripcion");
+        }
+
+    }
+
     //Actualizar a la ultima nota de cursada (obtener).
     //Mostrar historial de notas de la cursada, de una materia en especifico.
     //Obtener las inscripciones de los alumnos a una sola materia.
+    public List<Cursada> inscripcionesMateria(String nombreMateria) throws SQLException, ClassNotFoundException {
+        List<Cursada> totalIscripciones = listarInscripciones();
+        List<Cursada> inscriptosMateria = new ArrayList<>();
+        MateriaData md = new MateriaData();
+        Materia m = md.buscarMateriaNombre(nombreMateria);
+        
+        for (Cursada c : totalIscripciones) {
+            if(c.getMateria().getIdMateria() == m.getIdMateria()) {
+                inscriptosMateria.add(c);
+            }
+        }
+        
+        return inscriptosMateria;
+    }
 }

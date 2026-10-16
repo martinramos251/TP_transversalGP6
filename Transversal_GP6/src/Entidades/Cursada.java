@@ -10,6 +10,11 @@ public class Cursada {
     public Cursada() {
     }
 
+    public Cursada(Alumno alumno, Materia materia) {
+        this.alumno = alumno;
+        this.materia = materia;
+    }
+
     public Cursada(Alumno alumno, Materia materia, float nota) {
         this.alumno = alumno;
         this.materia = materia;

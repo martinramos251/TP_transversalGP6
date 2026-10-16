@@ -17,7 +17,7 @@ public class GP6_Universidad {
         try {
 
             MiConexion conexion = new MiConexion(); //Instanciar objeto MiConexion para usarlo en el metodo de AlumnoData
-            AlumnoData alu = new AlumnoData(); //Se instancia un objeto AlumnoData que inicializa el metodo buscarConexion
+            AlumnoData ad = new AlumnoData(); //Se instancia un objeto AlumnoData que inicializa el metodo buscarConexion
             MateriaData md = new MateriaData(); //Se instancia un objeto MateriaData que inicializa el metodo buscarConexion
             CursadaData cd = new CursadaData(); //Se instancia un objeto CursadaData que inicializa el metodo buscarConexion
 
@@ -56,10 +56,10 @@ public class GP6_Universidad {
 //            md.borrarMateria(2);
 //            md.altaBajaLogica(1, false);
 //           System.out.println(md.listarMaterias());
-//         Cursada cursa = new Cursada(alu.buscarAlumno(3), md.buscarMateria(1), 7);
-//        cd.inscribirAlumnoMateria(cursa);
+         Cursada cursa = new Cursada(ad.buscarAlumno(2), md.buscarMateria(4));
+        cd.inscribirAlumnoMateria(cursa);
 //
-            System.out.println(cd.noInscripto(44954914));
+ //           System.out.println(cd.inscripcionesMateria("Lengua"));
 
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Error de conexion" + ex.getMessage());

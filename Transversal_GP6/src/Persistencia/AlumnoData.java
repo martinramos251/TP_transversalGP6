@@ -54,6 +54,27 @@ public class AlumnoData {
         return alumno;
     }
 
+    public Alumno buscarAlumnoDni(int dni) {
+        Alumno alumno = null;
+        String sql = "SELECT * FROM alumno WHERE dni = ?";
+
+        try (PreparedStatement ps = conect.prepareStatement(sql)) {
+            ps.setInt(1, dni);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                alumno = new Alumno();
+                alumno.setIdAlumno(rs.getInt("idAlumno"));
+                alumno.setDni(rs.getInt("dni"));
+                alumno.setNombre(rs.getString("nombre"));
+                alumno.setFechaNac(rs.getDate("fechaNac").toLocalDate()); // Date.valueOf( )
+                alumno.setActivo(rs.getBoolean("activo"));
+            }
+        } catch (SQLException ex) {
+            System.out.println("No se pudo hacer la consulta");
+        }
+        return alumno;
+    }
+
     public List<Alumno> listarAlumnos() {
         Alumno alumno = null;
         ArrayList<Alumno> listado = new ArrayList<>();
