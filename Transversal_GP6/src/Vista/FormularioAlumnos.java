@@ -3,10 +3,13 @@ package Vista;
 import Entidades.Alumno;
 import Persistencia.AlumnoData;
 import java.awt.Image;
-import java.sql.Date;
+
+import java.time.ZoneId;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -40,9 +43,9 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
             ad = new AlumnoData();
             allAlumnos = ad.listarAlumnos();
         } catch (ClassNotFoundException ex) {
-            System.out.println("aaa");
+            JOptionPane.showMessageDialog(this, "Error al cargar los drivers");
         } catch (SQLException ex){
-            System.out.println("ssss");
+            JOptionPane.showMessageDialog(this, "Error de conexion");
         }
         
         mostrarLista();
@@ -206,7 +209,11 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         JBguardar.setFont(new java.awt.Font("Dubai Medium", 1, 18)); // NOI18N
         JBguardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/guardar.png"))); // NOI18N
         JBguardar.setText("Guardar");
-        JBguardar.setEnabled(false);
+        JBguardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JBguardarActionPerformed(evt);
+            }
+        });
 
         JBborrar.setFont(new java.awt.Font("Dubai Medium", 1, 12)); // NOI18N
         JBborrar.setText("Borrar");
@@ -354,9 +361,19 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_JCactivoActionPerformed
 
     private void JBborrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBborrarActionPerformed
-        int filaS = JTalumnos.getSelectedRow();
+        Iterator<Alumno> it = allAlumnos.iterator(); //Se crea para borrar tambien al alumno del ArrayList.
+        int filaS = JTalumnos.getSelectedRow(); //Obtiene el indice de la fila que el usuario selecciono en la tabla.
         if (filaS != -1) {
-            modelo.removeRow(filaS);
+            int id = (int) JTalumnos.getValueAt(filaS, 0); //Obtiene el valor que se encuentra en esa fila justo en esa columna.
+            
+            while (it.hasNext()) {
+                if (it.next().getIdAlumno() == id) { //Se fija que el valor del idAlumno coincide con el valor extraido de esa fila seleccioanda en la columna idAlumno.
+                    it.remove();
+                }
+            }
+            ad.borrarAlumno(id); //Ejecuta el metodo de AlumnoData para borrar al alumno de la base de datos.
+            modelo.removeRow(filaS); //Elimina al alumno seleccionado de la tabla.
+            mostrarLista();
         } else {
             JOptionPane.showMessageDialog(this, "Debes seleccionar una fila");
         }
@@ -377,7 +394,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
             String nombre = (String) JTalumnos.getValueAt(filaSelected, 2);
             LocalDate fechaNacimiento = (LocalDate) JTalumnos.getValueAt(filaSelected, 3);
             boolean activo = (boolean) JTalumnos.getValueAt(filaSelected, 4);
-            Date fechaNac = Date.valueOf(fechaNacimiento);
+            Date fechaNac = Date.from(fechaNacimiento.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
             
             JTFdni.setText(dni + "");
             JTFnombre.setText(nombre);
@@ -428,6 +445,20 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         borrarFilas();
         cargarDatos();
     }//GEN-LAST:event_JRBidActionPerformed
+
+    private void JBguardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBguardarActionPerformed
+        try{
+            int dni = Integer.parseInt(JTFdni.getText().trim());
+            String nombre = JTFnombre.getText().trim();
+            LocalDate fechaNacimiento = JDCfechaNac.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            boolean activo = JCactivo.isSelected();
+        
+        }catch(NumberFormatException nf){
+            JOptionPane.showMessageDialog(this, "Debe completar todos los campos");
+        }catch (NullPointerException np){
+            JOptionPane.showMessageDialog(this, "Fecha invalida");
+        }
+    }//GEN-LAST:event_JBguardarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -505,6 +536,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         }
     }
     
+    //Permite borrar las filas mientras se encribe en los campos de filtrar.
     private void borrarFilas(){
         int filas = JTalumnos.getRowCount() -1;
         for (int f = filas; f >= 0; f--) {
