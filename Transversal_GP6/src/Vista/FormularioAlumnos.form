@@ -333,6 +333,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Dar de Alta"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JBaltaActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="JBbaja">
       <Properties>
@@ -341,6 +344,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Dar de Baja"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JBbajaActionPerformed"/>
+      </Events>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane2">
       <AuxValues>

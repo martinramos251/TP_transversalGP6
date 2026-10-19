@@ -238,9 +238,19 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
 
         JBalta.setFont(new java.awt.Font("Dubai Medium", 1, 12)); // NOI18N
         JBalta.setText("Dar de Alta");
+        JBalta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JBaltaActionPerformed(evt);
+            }
+        });
 
         JBbaja.setFont(new java.awt.Font("Dubai Medium", 1, 12)); // NOI18N
         JBbaja.setText("Dar de Baja");
+        JBbaja.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JBbajaActionPerformed(evt);
+            }
+        });
 
         JTalumnos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -362,20 +372,24 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
 
     private void JBborrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBborrarActionPerformed
         Iterator<Alumno> it = allAlumnos.iterator(); //Se crea para borrar tambien al alumno del ArrayList.
+        int respuesta = JOptionPane.showConfirmDialog(this, "¿Desea eliminar al alumno?", "Advertencia", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         int filaS = JTalumnos.getSelectedRow(); //Obtiene el indice de la fila que el usuario selecciono en la tabla.
         if (filaS != -1) {
-            int id = (int) JTalumnos.getValueAt(filaS, 0); //Obtiene el valor que se encuentra en esa fila justo en esa columna.
             
+            int id = (int) JTalumnos.getValueAt(filaS, 0); //Obtiene el valor que se encuentra en esa fila justo en esa columna.
+            if(respuesta == JOptionPane.YES_OPTION){ //Si la respuesta fue "Si".
             while (it.hasNext()) {
-                if (it.next().getIdAlumno() == id) { //Se fija que el valor del idAlumno coincide con el valor extraido de esa fila seleccioanda en la columna idAlumno.
-                    it.remove();
+                if (it.next().getIdAlumno() == id) { //Se fija que el valor del idAlumno coincide con el valor extraido de esa fila seleccionada en la columna idAlumno.
+                    it.remove(); //Si coincide lo elimina.
+                    break;
                 }
             }
             ad.borrarAlumno(id); //Ejecuta el metodo de AlumnoData para borrar al alumno de la base de datos.
             modelo.removeRow(filaS); //Elimina al alumno seleccionado de la tabla.
-            mostrarLista();
+            JOptionPane.showMessageDialog(this, "Eliminacion exitosa!");
+            }
         } else {
-            JOptionPane.showMessageDialog(this, "Debes seleccionar una fila");
+            JOptionPane.showMessageDialog(this, "Debe seleccionar una fila", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_JBborrarActionPerformed
 
@@ -388,12 +402,12 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_JTFbuscarDniActionPerformed
 
     private void JTalumnosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JTalumnosMouseClicked
-        int filaSelected = JTalumnos.getSelectedRow();
-        if(filaSelected != -1){
-            int dni = (int) JTalumnos.getValueAt(filaSelected, 1);
-            String nombre = (String) JTalumnos.getValueAt(filaSelected, 2);
-            LocalDate fechaNacimiento = (LocalDate) JTalumnos.getValueAt(filaSelected, 3);
-            boolean activo = (boolean) JTalumnos.getValueAt(filaSelected, 4);
+        int filaS = JTalumnos.getSelectedRow();
+        if(filaS != -1){
+            int dni = (int) JTalumnos.getValueAt(filaS, 1);
+            String nombre = (String) JTalumnos.getValueAt(filaS, 2);
+            LocalDate fechaNacimiento = (LocalDate) JTalumnos.getValueAt(filaS, 3);
+            boolean activo = (boolean) JTalumnos.getValueAt(filaS, 4);
             Date fechaNac = Date.from(fechaNacimiento.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
             
             JTFdni.setText(dni + "");
@@ -459,6 +473,54 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "Fecha invalida");
         }
     }//GEN-LAST:event_JBguardarActionPerformed
+
+    private void JBbajaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBbajaActionPerformed
+        int filaS = JTalumnos.getSelectedRow();
+        if (filaS != -1) {
+            int id = (int) JTalumnos.getValueAt(filaS, 0);
+            boolean estado = (boolean) JTalumnos.getValueAt(filaS, 4);
+            if(estado){
+                ad.altaBajaLogica(id, false);
+                for (Alumno a : allAlumnos) {
+                    if(a.getIdAlumno() == id){
+                        a.setActivo(false);
+                        modelo.setValueAt(false, filaS, 4);
+                        JCactivo.setSelected(false);
+                        break;
+                    }
+                }
+                JOptionPane.showMessageDialog(this, "El alumno ha sido dado de baja con exito!");
+            }else{
+                JOptionPane.showMessageDialog(this, "No puede dar de baja a un alumno que ya lo esta! :b", "ERROR", JOptionPane.ERROR_MESSAGE);
+            }
+        }else{
+            JOptionPane.showMessageDialog(this, "Debe seleccionar una fila", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_JBbajaActionPerformed
+
+    private void JBaltaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBaltaActionPerformed
+        int filaS = JTalumnos.getSelectedRow();
+        if (filaS != -1) {
+            int id = (int) JTalumnos.getValueAt(filaS, 0);
+            boolean estado = (boolean) JTalumnos.getValueAt(filaS, 4);
+            if (estado) {
+                JOptionPane.showMessageDialog(this, "No puede dar de alta a un alumno que ya lo esta! :b", "ERROR", JOptionPane.ERROR_MESSAGE); 
+            } else {
+                ad.altaBajaLogica(id, true);
+                for (Alumno a : allAlumnos) {
+                    if (a.getIdAlumno() == id) {
+                        a.setActivo(true);
+                        modelo.setValueAt(true, filaS, 4);
+                        JCactivo.setSelected(true);
+                        break;
+                    }
+                }
+                JOptionPane.showMessageDialog(this, "El alumno ha sido dado de alta con exito!");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar una fila", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_JBaltaActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
