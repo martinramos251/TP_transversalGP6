@@ -34,11 +34,6 @@ public class Menu extends javax.swing.JFrame {
         );
 
         JMalumnos.setText("Menu");
-        JMalumnos.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JMalumnosActionPerformed(evt);
-            }
-        });
 
         JMIformularioAlumno.setText("Formulario de Alumnos");
         JMIformularioAlumno.addActionListener(new java.awt.event.ActionListener() {
@@ -93,10 +88,6 @@ public class Menu extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void JMalumnosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JMalumnosActionPerformed
-
-    }//GEN-LAST:event_JMalumnosActionPerformed
 
     private void JMIformularioAlumnoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JMIformularioAlumnoActionPerformed
         JDPescritorio.removeAll();

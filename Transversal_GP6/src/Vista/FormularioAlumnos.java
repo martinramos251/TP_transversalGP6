@@ -3,7 +3,6 @@ package Vista;
 import Entidades.Alumno;
 import Persistencia.AlumnoData;
 import java.awt.Image;
-
 import java.time.ZoneId;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -24,9 +23,17 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         }
     };
     
+    boolean tNombre = false;
+    boolean tDni = false;
+    boolean tFecha = false;
+    
     //Creacion de un objeto AlumnoData y el ArrayList donde estaran todos los alumnos.
     AlumnoData ad;
     List<Alumno> allAlumnos = new ArrayList<>();
+    
+    /* Creacion del ArrayList donde estaran todos los alumnos al momento de aprentar el boton "guardar", 
+    despues se cargaran a la base de datos cuando se aprete el boton "actualizar". */
+    List<Alumno> allAlumnos2 = new ArrayList<>();
 
     public FormularioAlumnos() {
         initComponents();
@@ -38,7 +45,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         BGbuscar.add(JRBdni);
         JTFbuscarDni.setEnabled(false);
         
-        //Inicializa el objeto de tipo AlumnoData y carga el ArrayList de alumnos.
+        //Inicializa el objeto de tipo AlumnoData y carga el ArrayList de alumnos (allAlumnos).
         try {
             ad = new AlumnoData();
             allAlumnos = ad.listarAlumnos();
@@ -94,11 +101,6 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         setClosable(true);
         setIconifiable(true);
         setTitle("Formulario de Alumnos");
-        addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                formMouseClicked(evt);
-            }
-        });
 
         JLalumnos.setFont(new java.awt.Font("Arial Rounded MT Bold", 1, 24)); // NOI18N
         JLalumnos.setText("Alumnos");
@@ -114,11 +116,6 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
             }
         });
 
-        JTFid.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JTFidActionPerformed(evt);
-            }
-        });
         JTFid.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 JTFidKeyReleased(evt);
@@ -131,15 +128,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         JLbuscarDni.setFont(new java.awt.Font("Dubai Medium", 1, 16)); // NOI18N
         JLbuscarDni.setText("DNI");
 
-        JTFbuscarDni.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JTFbuscarDniActionPerformed(evt);
-            }
-        });
         JTFbuscarDni.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                JTFbuscarDniKeyPressed(evt);
-            }
             public void keyReleased(java.awt.event.KeyEvent evt) {
                 JTFbuscarDniKeyReleased(evt);
             }
@@ -192,23 +181,36 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         JLnombre.setFont(new java.awt.Font("Dubai Medium", 1, 16)); // NOI18N
         JLnombre.setText("NOMBRE:");
 
+        JTFnombre.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                JTFnombreCaretUpdate(evt);
+            }
+        });
+        JTFnombre.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTFnombreKeyTyped(evt);
+            }
+        });
+
         JLfechaNac.setFont(new java.awt.Font("Dubai Medium", 1, 16)); // NOI18N
         JLfechaNac.setText("Fecha de nacimiento :");
+
+        JDCfechaNac.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                JDCfechaNacPropertyChange(evt);
+            }
+        });
 
         JLactivo.setFont(new java.awt.Font("Dubai Medium", 1, 16)); // NOI18N
         JLactivo.setText("Activo");
 
         JCactivo.setVerticalAlignment(javax.swing.SwingConstants.TOP);
         JCactivo.setVerticalTextPosition(javax.swing.SwingConstants.TOP);
-        JCactivo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JCactivoActionPerformed(evt);
-            }
-        });
 
         JBguardar.setFont(new java.awt.Font("Dubai Medium", 1, 18)); // NOI18N
         JBguardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/guardar.png"))); // NOI18N
         JBguardar.setText("Guardar");
+        JBguardar.setEnabled(false);
         JBguardar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JBguardarActionPerformed(evt);
@@ -272,6 +274,17 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
 
         JLdni.setFont(new java.awt.Font("Dubai Medium", 1, 16)); // NOI18N
         JLdni.setText("DNI:");
+
+        JTFdni.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                JTFdniCaretUpdate(evt);
+            }
+        });
+        JTFdni.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTFdniKeyTyped(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -357,19 +370,8 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void JTFidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JTFidActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_JTFidActionPerformed
-
-    private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
-
-    }//GEN-LAST:event_formMouseClicked
-
-    private void JCactivoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JCactivoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_JCactivoActionPerformed
-
+    
+    //Borrar un alumno (en todo).
     private void JBborrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBborrarActionPerformed
         Iterator<Alumno> it = allAlumnos.iterator(); //Se crea para borrar tambien al alumno del ArrayList.
         int respuesta = JOptionPane.showConfirmDialog(this, "¿Desea eliminar al alumno?", "Advertencia", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
@@ -386,21 +388,20 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
             }
             ad.borrarAlumno(id); //Ejecuta el metodo de AlumnoData para borrar al alumno de la base de datos.
             modelo.removeRow(filaS); //Elimina al alumno seleccionado de la tabla.
-            JOptionPane.showMessageDialog(this, "Eliminacion exitosa!");
+            limpiar(); //Limpia todo al terminar.
+            JOptionPane.showMessageDialog(this, "Alumno eliminado!");
             }
         } else {
             JOptionPane.showMessageDialog(this, "Debe seleccionar una fila", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_JBborrarActionPerformed
-
+    
+    //Limpiar todo
     private void JBlimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBlimpiarActionPerformed
         limpiar();
     }//GEN-LAST:event_JBlimpiarActionPerformed
-
-    private void JTFbuscarDniActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JTFbuscarDniActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_JTFbuscarDniActionPerformed
-
+    
+    //Rellenar los campos al hacer click en la tabla.
     private void JTalumnosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JTalumnosMouseClicked
         int filaS = JTalumnos.getSelectedRow();
         if(filaS != -1){
@@ -417,8 +418,10 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         }
         JBborrar.setEnabled(true);
         JBactualizar.setEnabled(true);
+        JBguardar.setEnabled(true);
     }//GEN-LAST:event_JTalumnosMouseClicked
-
+    
+    //Eliminar elementos de la tabla mientras se busca (por dni).
     private void JTFbuscarDniKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTFbuscarDniKeyReleased
         borrarFilas();
         for (Alumno a : allAlumnos) {
@@ -429,10 +432,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_JTFbuscarDniKeyReleased
 
-    private void JTFbuscarDniKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTFbuscarDniKeyPressed
-
-    }//GEN-LAST:event_JTFbuscarDniKeyPressed
-
+    //Eliminar elementos de la tabla mientras se busca (por id).
     private void JTFidKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTFidKeyReleased
         borrarFilas();
         for (Alumno a : allAlumnos) {
@@ -442,7 +442,8 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
             }
         }
     }//GEN-LAST:event_JTFidKeyReleased
-
+    
+    //Limpieza al intentar buscar por dni.
     private void JRBdniActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRBdniActionPerformed
         JTFid.setEnabled(false);
         JTFbuscarDni.setEnabled(true);
@@ -450,7 +451,8 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         borrarFilas();
         cargarDatos();
     }//GEN-LAST:event_JRBdniActionPerformed
-
+    
+    //Limpieza al intentar buscar por id.
     private void JRBidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRBidActionPerformed
         borrarFilas();
         JTFid.setEnabled(true);
@@ -459,21 +461,58 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         borrarFilas();
         cargarDatos();
     }//GEN-LAST:event_JRBidActionPerformed
-
+    
+    //Guardar un alumno (no en la base de datos).
     private void JBguardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBguardarActionPerformed
         try{
+            //Variables para almacenar los datos extraidos.
             int dni = Integer.parseInt(JTFdni.getText().trim());
             String nombre = JTFnombre.getText().trim();
             LocalDate fechaNacimiento = JDCfechaNac.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             boolean activo = JCactivo.isSelected();
-        
+            Alumno a = new Alumno(dni, nombre, fechaNacimiento, activo);
+            
+            //Varibales para la verificacion de datos.
+            int longitudDni = String.valueOf(dni).length();
+            boolean disparador = true;
+            LocalDate fechaActual = LocalDate.now();
+            LocalDate fechaMaxima = fechaActual.minusYears(16);
+  
+            if (longitudDni == 7 || longitudDni == 8) {
+                for (Alumno alu : allAlumnos) {
+                    if (alu.getDni() == a.getDni()) {
+                        disparador = false;
+                        break;
+                    }
+                }
+                if (disparador) {
+                    if (nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$")) { //Funcion que fue investigada, permite que solo acepte letras de la a-z, "Ñ" y tildes (no acepta espacios).
+                        if (fechaNacimiento.isBefore(fechaMaxima) || fechaNacimiento.isEqual(fechaMaxima)) {
+                            ad.guardarAlumno(a);
+                            allAlumnos.add(a);
+                            limpiar();
+                            JOptionPane.showMessageDialog(this, "Alumno guardado!");
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Fecha no admitida", "ERROR", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }else {
+                        JOptionPane.showMessageDialog(this, "Nombre invalido", "ERROR", JOptionPane.ERROR_MESSAGE);
+                    }
+                }else {
+                    JOptionPane.showMessageDialog(this, "Este DNI ya se encuentra registrado", "ERROR", JOptionPane.ERROR_MESSAGE);
+                }
+            }else {
+                JOptionPane.showMessageDialog(this, "DNI invalido, debe contener una combinacion de 7-8 numeros", "ERROR", JOptionPane.ERROR_MESSAGE);
+            }
+            mostrarLista();
         }catch(NumberFormatException nf){
-            JOptionPane.showMessageDialog(this, "Debe completar todos los campos");
+            JOptionPane.showMessageDialog(this, "Datos incompletos/incorrectos", "ERROR", JOptionPane.ERROR_MESSAGE);
         }catch (NullPointerException np){
-            JOptionPane.showMessageDialog(this, "Fecha invalida");
+            JOptionPane.showMessageDialog(this, "Fecha invalida", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_JBguardarActionPerformed
-
+    
+    //Dar de baja a un alumno
     private void JBbajaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBbajaActionPerformed
         int filaS = JTalumnos.getSelectedRow();
         if (filaS != -1) {
@@ -497,7 +536,8 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "Debe seleccionar una fila", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_JBbajaActionPerformed
-
+    
+    //Dar de alta a un alumno.
     private void JBaltaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBaltaActionPerformed
         int filaS = JTalumnos.getSelectedRow();
         if (filaS != -1) {
@@ -521,6 +561,38 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "Debe seleccionar una fila", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_JBaltaActionPerformed
+    
+    //Detecta que se escribio y activa el boton "guardar", si el campo esta vacio el boton se desactiva.
+    private void JTFnombreCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_JTFnombreCaretUpdate
+        //JBguardar.setEnabled(!JTFnombre.getText().isEmpty());
+    }//GEN-LAST:event_JTFnombreCaretUpdate
+    
+    //Detecta que se escribio y activa el boton "guardar", si el campo esta vacio el boton se desactiva.
+    private void JTFdniCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_JTFdniCaretUpdate
+        //JBguardar.setEnabled(!JTFdni.getText().isEmpty());
+    }//GEN-LAST:event_JTFdniCaretUpdate
+    
+    //Detecta que se escribio y activa el boton "guardar", si el campo esta vacio el boton se desactiva.
+    private void JDCfechaNacPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_JDCfechaNacPropertyChange
+        tFecha = true;
+        if(tDni && tNombre){
+            JBguardar.setEnabled(JDCfechaNac.getDate() != null);
+        }
+    }//GEN-LAST:event_JDCfechaNacPropertyChange
+
+    private void JTFnombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTFnombreKeyTyped
+        tNombre = true;
+        if(tFecha && tDni){
+            JBguardar.setEnabled(!JTFnombre.getText().isEmpty());
+        }
+    }//GEN-LAST:event_JTFnombreKeyTyped
+
+    private void JTFdniKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTFdniKeyTyped
+        tDni = true;
+        if(tFecha && tNombre){
+            JBguardar.setEnabled(!JTFdni.getText().isEmpty());
+        }
+    }//GEN-LAST:event_JTFdniKeyTyped
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -589,6 +661,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
     
     private void mostrarLista(){
         System.out.println(allAlumnos);
+        System.out.println(allAlumnos2);
     }
     
     //Carga los alumnos a la tabla.
