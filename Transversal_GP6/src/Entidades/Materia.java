@@ -35,7 +35,7 @@ public class Materia {
     public boolean getEstado() {
         return estado;
     }
-       
+
     public void setEstado(boolean estado) {
         this.estado = estado;
     }
@@ -68,6 +68,11 @@ public class Materia {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString() {
+        return "idMateria: " + idMateria + "\nNombre: " + nombre + "\nEstado: " + estado + "\n";
     }
 
 }

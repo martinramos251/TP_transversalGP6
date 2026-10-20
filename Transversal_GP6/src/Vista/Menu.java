@@ -1,9 +1,30 @@
 package Vista;
 
+import Entidades.Cursada;
+import Persistencia.CursadaData;
+import Persistencia.MateriaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.JOptionPane;
+
 public class Menu extends javax.swing.JFrame {
-  
+
+    static List<Cursada> allCursadas = new ArrayList<>();
+    static CursadaData cd;
+
     public Menu() {
         initComponents();
+
+        //Inicializa el objeto de tipo MateriaData y carga el ArrayList de materias (allMaterias).
+        try {
+            cd = new CursadaData();
+            allCursadas = cd.listarInscripciones();
+        } catch (ClassNotFoundException ex) {
+            JOptionPane.showMessageDialog(this, "Error al cargar los drivers", "ERROR", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error al establecer la conexion con la base de datos", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -171,5 +192,5 @@ public class Menu extends javax.swing.JFrame {
     private javax.swing.JMenu JMalumnos;
     private javax.swing.JMenuBar JMenuBarra;
     // End of variables declaration//GEN-END:variables
-   
+
 }

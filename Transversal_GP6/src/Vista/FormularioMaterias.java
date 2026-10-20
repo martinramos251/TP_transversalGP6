@@ -1,12 +1,16 @@
 package Vista;
 
+import Entidades.Cursada;
 import Entidades.Materia;
+import Persistencia.CursadaData;
 import Persistencia.MateriaData;
 import java.awt.Image;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 
@@ -24,6 +28,7 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
 
     //Creacion de un objeto AlumnoData y el ArrayList donde estaran todos las materias traidas de la base de datos.
     MateriaData md;
+    CursadaData cd;
     List<Materia> allMaterias = new ArrayList<>();
 
     public FormularioMaterias() {
@@ -39,6 +44,7 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
         //Inicializa el objeto de tipo MateriaData y carga el ArrayList de materias (allMaterias).
         try {
             md = new MateriaData();
+            cd = new CursadaData();
             allMaterias = md.listarMaterias();
         } catch (ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(this, "Error al cargar los drivers", "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -103,6 +109,11 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
         JBguardar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Imagen/guardar.png"))); // NOI18N
         JBguardar.setText("Guardar");
         JBguardar.setEnabled(false);
+        JBguardar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JBguardarActionPerformed(evt);
+            }
+        });
 
         JBborrar.setFont(new java.awt.Font("Dubai Medium", 1, 12)); // NOI18N
         JBborrar.setText("Borrar");
@@ -116,6 +127,11 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
         JBactualizar.setFont(new java.awt.Font("Dubai Medium", 1, 12)); // NOI18N
         JBactualizar.setText("Actualizar");
         JBactualizar.setEnabled(false);
+        JBactualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JBactualizarActionPerformed(evt);
+            }
+        });
 
         JBlimpiar.setFont(new java.awt.Font("Dubai Medium", 1, 12)); // NOI18N
         JBlimpiar.setText("Limpiar");
@@ -143,6 +159,12 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
 
         JLbuscarMateria.setFont(new java.awt.Font("Dubai Medium", 1, 20)); // NOI18N
         JLbuscarMateria.setText("Buscar Materia");
+
+        JTFnombre.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                JTFnombreKeyTyped(evt);
+            }
+        });
 
         JLnombre.setFont(new java.awt.Font("Dubai Medium", 1, 16)); // NOI18N
         JLnombre.setText("NOMBRE:");
@@ -427,12 +449,14 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_JBbajaActionPerformed
 
     private void JBborrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBborrarActionPerformed
+        Iterator<Cursada> itCursada = Menu.allCursadas.iterator(); // se crea para borrar la cursada del ArrayList
 
         Iterator<Materia> it = allMaterias.iterator(); // Se crea para borrar la materia del ArrayList.
         int respuesta = JOptionPane.showConfirmDialog(this, "¿Desea eliminar la materia?", "Advertencia", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         int filaS = JTmaterias.getSelectedRow(); // Obtiene el indice de la fila que el usuario selecciono en la tabla.
         if (filaS != -1) {
             int id = (int) JTmaterias.getValueAt(filaS, 0); // Obtiene el valor que se encuentra en esa fila justo en esa columna.
+            String nombreMateria = (String) JTmaterias.getValueAt(filaS, 1);
             if (respuesta == JOptionPane.YES_OPTION) { //Si la respuesta fue "Si".
                 while (it.hasNext()) {
                     if (it.next().getIdMateria() == id) { //Se fija que el valor del idMateria coincide con el valor extraido de esa fila seleccionada en la columna idMateria.
@@ -440,8 +464,15 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
                         break;
                     }
                 }
+
+                try {
+                    cd.borrarInscripcion(nombreMateria);
+                } catch (SQLException ex) {
+                    Logger.getLogger(FormularioMaterias.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (ClassNotFoundException ex) {
+                    Logger.getLogger(FormularioMaterias.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 md.borrarMateria(id); //Ejecuta el metodo de MateriaData para borrar la materia de la base de datos.
-                
                 modelo.removeRow(filaS); //Elimina la materia seleccionado de la tabla.
                 limpiar(); //Limpia todo al terminar.
                 JOptionPane.showMessageDialog(this, "Materia eliminada!");
@@ -452,6 +483,96 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
 
 
     }//GEN-LAST:event_JBborrarActionPerformed
+
+    private void JTFnombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTFnombreKeyTyped
+        habilitarGuardar();
+    }//GEN-LAST:event_JTFnombreKeyTyped
+
+    private void JBguardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBguardarActionPerformed
+        try {
+            //Variables para almacenar los datos extraidos.
+            String nombre = JTFnombre.getText().trim();
+            boolean activo = JCestado.isSelected();
+            Materia m;
+            boolean disparador = true;
+
+            //Verificacion de datos.
+            for (Materia materia : allMaterias) {
+                if (materia.getNombre().equalsIgnoreCase(nombre)) {
+                    disparador = false;
+                    JOptionPane.showMessageDialog(this, "El nombre ya está cargado en la base de datos. Ingrese otro.");
+                    break;
+                }
+            }
+            if (disparador) {
+                if (nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$")) { //Verificacion de nombre. Funcion que fue investigada, permite que solo acepte letras de la a-z, "Ñ" y tildes (no acepta espacios).
+                    m = new Materia(nombre, activo);
+                    md.guardarMateria(m);
+                    allMaterias.add(m);
+                    limpiar();
+                    JOptionPane.showMessageDialog(this, "Materia guardada con éxito!");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Nombre invalido", "ERROR", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+
+        } catch (NumberFormatException nf) {
+            JOptionPane.showMessageDialog(this, "Datos incompletos/incorrectos", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_JBguardarActionPerformed
+
+    private void JBactualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBactualizarActionPerformed
+        try {
+            //Variables para almacenar los datos extraidos.
+            String nombre = JTFnombre.getText().trim();
+            boolean activo = JCestado.isSelected();
+            Materia m;
+
+            //Varibales para la verificacion de datos.
+            int filaS = JTmaterias.getSelectedRow();
+            boolean disparador = true;
+
+            //Verificacion de datos.    
+            if (filaS != -1) { //Todo funcionara si hay una fila seleccionada.
+                int id = (int) JTmaterias.getValueAt(filaS, 0);
+
+                for (Materia materia : allMaterias) {
+                    if (materia.getNombre().equalsIgnoreCase(nombre)) {
+                        disparador = false;
+                        JOptionPane.showMessageDialog(this, "El nombre ya está cargado en la base de datos");
+                        break;
+                    }
+
+                }
+                if (disparador) {
+                    if (nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$")) { //Verficacion de nombre. Funcion que fue investigada, permite que solo acepte letras de la a-z, "Ñ" y tildes (no acepta espacios).
+                        m = new Materia(nombre, activo);
+                        m.setIdMateria(id);
+                        for (Materia act : allMaterias) { //Actualizacion del alumno en el ArrayList para actualizar la tabla.
+                            if (act.getIdMateria() == id) {
+                                if (!act.getNombre().equals(nombre)) {
+                                    act.setNombre(nombre);
+                                    modelo.setValueAt(nombre, filaS, 1);
+                                } else {
+                                    JOptionPane.showMessageDialog(this, "Nombre en uso");
+                                }
+                                break;
+                            }
+                        }
+                        md.actualizarMateria(m);
+                        limpiar();
+                        JOptionPane.showMessageDialog(this, "Materia actualizada!");
+                    }
+                }
+
+            } else {
+                JOptionPane.showMessageDialog(this, "Debe seleccionar una fila para actualizar", "ERROR", JOptionPane.ERROR_MESSAGE);
+            }
+
+        } catch (NumberFormatException nf) {
+            JOptionPane.showMessageDialog(this, "Datos incompletos/incorrectos", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_JBactualizarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -545,4 +666,11 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
         System.out.println(allMaterias);
     }
 
+    private void habilitarGuardar() {
+        if (!JTFnombre.getText().trim().isEmpty()) {
+            JBguardar.setEnabled(true);
+        } else {
+            JBguardar.setEnabled(false);
+        }
+    }
 }
