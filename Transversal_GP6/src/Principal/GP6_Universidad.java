@@ -28,23 +28,34 @@ public class GP6_Universidad {
 //            luciano.setIdAlumno(alu.buscarAlumno(21).getIdAlumno());
 //
 //            Alumno franco = new Alumno(37640491, "Franco", LocalDate.of(1999, 11, 15), true);
-//           alu.guardarAlumno(franco);
+//            alu.guardarAlumno(franco);
 //
 //            Alumno enzo = new Alumno(44954914, "Enzo", LocalDate.of(2003, 9, 2), true);
 //            alu.guardarAlumno(enzo);
-//            
+//           
 //            Alumno martin = new Alumno(45267558, "Martin", LocalDate.of(2003, 9, 3), true);
 //            alu.guardarAlumno(martin);   
 //            
 //            Alumno roman = new Alumno(47318814, "Roman", LocalDate.of(2006, 6, 29), true);
 //            alu.guardarAlumno(roman);
+//            
 //            Alumno cami = new Alumno(42220747, "Cami", LocalDate.of(1999, 11, 10), true);
 //            alu.guardarAlumno(cami);
 
             /* CARGA DE MATERIAS */
-//            Materia lengua = new Materia("Lengua", true);
+//            Materia mat = new Materia("Lengua", true);
+//            Materia mat2 = new Materia("Matematicas", true);
+//           Materia mat3 = new Materia("Lab Programacion", true);
+//            Materia mat4 = new Materia("Programacion Web I", true);
+//            Materia mat5 = new Materia("Redes", true);
+//            Materia mat6 = new Materia("Base de Datos", true);
+//            md.guardarMateria(mat);
+//            md.guardarMateria(mat2);
+//            md.guardarMateria(mat3);
+//            md.guardarMateria(mat4);
+//            md.guardarMateria(mat5);
+//            md.guardarMateria(mat6);
 //           Materia lenguaId = md.buscarMateria(2);
-//            md.guardarMateria(lengua);
 //            lengua.setIdMateria(md.buscarMateria(2).getIdMateria());
 //          Dar de alta o baja
 //         alu.altaBajaLogica(18, false);
@@ -56,15 +67,16 @@ public class GP6_Universidad {
 //            md.borrarMateria(2);
 //            md.altaBajaLogica(1, false);
 //           System.out.println(md.listarMaterias());
-//         Cursada cursa = new Cursada(ad.buscarAlumno(2), md.buscarMateria(4));
-//        cd.inscribirAlumnoMateria(cursa);
+//           Cursada cursa = new Cursada(alu.buscarAlumno(4), md.buscarMateria(1), 7);
+//            cd.inscribirAlumnoMateria(cursa);
 //
-            System.out.println(cd.inscripcionesMateria("Lengua"));
+           //System.out.println(cd.listarInscripciones());
+            System.out.println(alu.listarAlumnos());
 
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Error de conexion" + ex.getMessage());
-        } catch (ClassNotFoundException cargar) {
-            JOptionPane.showMessageDialog(null, "Error al cargar Driver" + cargar.getMessage());
+        } catch (ClassNotFoundException cnf) {
+            JOptionPane.showMessageDialog(null, "Error al cargar los drivers", "ERROR", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException sqle) {
+            JOptionPane.showMessageDialog(null, "Error al establecer la conexion con la base de datos", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

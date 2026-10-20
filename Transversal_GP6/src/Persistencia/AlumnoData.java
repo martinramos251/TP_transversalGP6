@@ -80,15 +80,15 @@ public class AlumnoData {
         ArrayList<Alumno> listado = new ArrayList<>();
         String sql = "SELECT * FROM alumno";
         try (PreparedStatement ps = conect.prepareStatement(sql)) {
-            ResultSet rs = ps.executeQuery();  //3
-            while (rs.next()) {     //4
+            ResultSet rs = ps.executeQuery();  
+            while (rs.next()) {    
                 alumno = new Alumno();
                 alumno.setIdAlumno(rs.getInt("idAlumno"));
                 alumno.setDni(rs.getInt("dni"));
                 alumno.setNombre(rs.getString("nombre"));
                 alumno.setFechaNac(rs.getDate("fechaNac").toLocalDate());
                 alumno.setActivo(rs.getBoolean("activo"));
-                listado.add(alumno); //Agrega alumno al array 
+                listado.add(alumno);  
             }
         } catch (SQLException ex) {
             System.out.println("No se pudo listar los alumnos");
@@ -113,7 +113,6 @@ public class AlumnoData {
     }
 
     public void borrarAlumno(int id) {
-
         String sql = "DELETE FROM alumno WHERE idAlumno = ?";
         try (PreparedStatement ps = conect.prepareStatement(sql)) {
             ps.setInt(1, id);
@@ -124,7 +123,7 @@ public class AlumnoData {
         }
     }
 
-    // Este Metodo/Procedimiento lo hacemos asi para reutilizar codigo
+    //Este metodo lo hacemos asi para reutilizar codigo
     public void altaBajaLogica(int id, boolean status) {
         Alumno a = buscarAlumno(id); // Busco el alumno en la base
         a.setActivo(status); // Modifico el estado (para darle alta o baja) dependiendo lo que reciba por parametro

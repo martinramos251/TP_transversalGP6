@@ -35,12 +35,7 @@ public class Materia {
     public boolean getEstado() {
         return estado;
     }
-
-    @Override
-    public String toString() {
-        return "Materia{" + "idMateria=" + idMateria + ", nombre=" + nombre + ", estado=" + estado + '}';
-    }
-
+       
     public void setEstado(boolean estado) {
         this.estado = estado;
     }

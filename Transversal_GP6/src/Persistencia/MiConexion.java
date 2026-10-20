@@ -15,31 +15,7 @@ public class MiConexion {
     }
 
     public static Connection getConnection() {
-                Connection con = null;
-//
-//        if (con == null) {
-//            con = new Connection("jdbc:mysql://localhost/universidadg10", "root", "");
-//        }
-//
-//        try {
-//
-//            con = DriverManager.getConnection(
-//                    DATABASE_URL
-//                    + DATABASE_HOST
-//                    + DATABASE_PUERTO
-//                    + DATABASE_DB
-//                    + "?useLegacyDatetimeCode=false&serverTimezone=UTC"
-//                    + "&user="
-//                    + DATABASE_USUARIO
-//                    + "&password="
-//                    + DATABASE_PASSWORD
-//            );
-//
-//        } catch (SQLException ex) {
-//            System.out.println("Error de conexion");
-//        }
-//        return connection;
-//    }
+        Connection con = null;
         return connection;
     }
 
