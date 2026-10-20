@@ -163,6 +163,9 @@
         <Property name="text" type="java.lang.String" value="Borrar"/>
         <Property name="enabled" type="boolean" value="false"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JBborrarActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="JBactualizar">
       <Properties>
@@ -191,6 +194,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Dar de Alta"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JBaltaActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JButton" name="JBbaja">
       <Properties>
@@ -199,6 +205,9 @@
         </Property>
         <Property name="text" type="java.lang.String" value="Dar de Baja"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="JBbajaActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="JLbuscarMateria">
       <Properties>

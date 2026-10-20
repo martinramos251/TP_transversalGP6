@@ -15,14 +15,15 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class FormularioAlumnos extends javax.swing.JInternalFrame {
+
     //Crea el modelo por default y sobrescribe el metodo de la clase para hacer que las celdas no sean editabes.
-    private DefaultTableModel modelo = new DefaultTableModel(){
+    private DefaultTableModel modelo = new DefaultTableModel() {
         @Override
-        public boolean isCellEditable(int f, int c){
+        public boolean isCellEditable(int f, int c) {
             return false;
         }
     };
-    
+
     //Creacion de un objeto AlumnoData y el ArrayList donde estaran todos los alumnos traidos de la base de datos.
     AlumnoData ad;
     List<Alumno> allAlumnos = new ArrayList<>();
@@ -30,27 +31,27 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
     public FormularioAlumnos() {
         initComponents();
         UtilidadesGenerales.ocultarMenu(this);
-        
+
         //Este conjunto permite que solo se pueda buscar un alumnos por sola una opcion (id o dni).
         JRBid.setSelected(true);
         BGbuscar.add(JRBid);
         BGbuscar.add(JRBdni);
         JTFbuscarDni.setEnabled(false);
-        
+
         //Inicializa el objeto de tipo AlumnoData y carga el ArrayList de alumnos (allAlumnos).
         try {
             ad = new AlumnoData();
             allAlumnos = ad.listarAlumnos();
         } catch (ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(this, "Error al cargar los drivers", "ERROR", JOptionPane.ERROR_MESSAGE);
-        } catch (SQLException ex){
+        } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Error al establecer la conexion con la base de datos", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
-        
+
         mostrarLista();
         cargarCabecera();
         cargarDatos();
-        
+
         //Redimensionar iconos con el metodo.
         JBborrar.setIcon(redimensionIcon("/Imagen/eliminar.png", 25, 25));
         JBactualizar.setIcon(redimensionIcon("/Imagen/actualizar.png", 25, 25));
@@ -58,7 +59,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         JBalta.setIcon(redimensionIcon("/Imagen/check.png", 25, 25));
         JBbaja.setIcon(redimensionIcon("/Imagen/cruz.png", 25, 25));
     }
-           
+
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -357,58 +358,58 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
+
     //Borrar un alumno (en todo).
     private void JBborrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBborrarActionPerformed
         Iterator<Alumno> it = allAlumnos.iterator(); //Se crea para borrar tambien al alumno del ArrayList.
         int respuesta = JOptionPane.showConfirmDialog(this, "¿Desea eliminar al alumno?", "Advertencia", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         int filaS = JTalumnos.getSelectedRow(); //Obtiene el indice de la fila que el usuario selecciono en la tabla.
         if (filaS != -1) {
-            
+
             int id = (int) JTalumnos.getValueAt(filaS, 0); //Obtiene el valor que se encuentra en esa fila justo en esa columna.
-            if(respuesta == JOptionPane.YES_OPTION){ //Si la respuesta fue "Si".
-            while (it.hasNext()) {
-                if (it.next().getIdAlumno() == id) { //Se fija que el valor del idAlumno coincide con el valor extraido de esa fila seleccionada en la columna idAlumno.
-                    it.remove(); //Si coincide lo elimina.
-                    break;
+            if (respuesta == JOptionPane.YES_OPTION) { //Si la respuesta fue "Si".
+                while (it.hasNext()) {
+                    if (it.next().getIdAlumno() == id) { //Se fija que el valor del idAlumno coincide con el valor extraido de esa fila seleccionada en la columna idAlumno.
+                        it.remove(); //Si coincide lo elimina.
+                        break;
+                    }
                 }
-            }
-            ad.borrarAlumno(id); //Ejecuta el metodo de AlumnoData para borrar al alumno de la base de datos.
-            modelo.removeRow(filaS); //Elimina al alumno seleccionado de la tabla.
-            limpiar(); //Limpia todo al terminar.
-            JOptionPane.showMessageDialog(this, "Alumno eliminado!");
+                ad.borrarAlumno(id); //Ejecuta el metodo de AlumnoData para borrar al alumno de la base de datos.
+                modelo.removeRow(filaS); //Elimina al alumno seleccionado de la tabla.
+                limpiar(); //Limpia todo al terminar.
+                JOptionPane.showMessageDialog(this, "Alumno eliminado!");
             }
         } else {
             JOptionPane.showMessageDialog(this, "Debe seleccionar una fila", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_JBborrarActionPerformed
-    
+
     //Limpia todo.
     private void JBlimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBlimpiarActionPerformed
         limpiar();
     }//GEN-LAST:event_JBlimpiarActionPerformed
-    
+
     //Rellenar los campos al hacer click en la tabla.
     private void JTalumnosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JTalumnosMouseClicked
         int filaS = JTalumnos.getSelectedRow();
-        if(filaS != -1){
+        if (filaS != -1) {
             int dni = (int) JTalumnos.getValueAt(filaS, 1);
             String nombre = (String) JTalumnos.getValueAt(filaS, 2);
             LocalDate fechaNacimiento = (LocalDate) JTalumnos.getValueAt(filaS, 3);
             boolean activo = (boolean) JTalumnos.getValueAt(filaS, 4);
             Date fechaNac = Date.from(fechaNacimiento.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
-            
+
             JTFdni.setText(dni + "");
             JTFnombre.setText(nombre);
             JDCfechaNac.setDate(fechaNac);
             JCactivo.setSelected(activo);
         }
-        
+
         JBborrar.setEnabled(true);
         JBactualizar.setEnabled(true);
         JCactivo.setEnabled(false);
     }//GEN-LAST:event_JTalumnosMouseClicked
-    
+
     //Eliminar elementos de la tabla mientras se busca (por dni).
     private void JTFbuscarDniKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTFbuscarDniKeyReleased
         borrarFilas();
@@ -430,7 +431,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
             }
         }
     }//GEN-LAST:event_JTFidKeyReleased
-    
+
     //Limpieza al intentar buscar por dni, bloqueo campo id.
     private void JRBdniActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRBdniActionPerformed
         borrarFilas();
@@ -439,7 +440,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         cargarDatos();
         limpiar();
     }//GEN-LAST:event_JRBdniActionPerformed
-    
+
     //Limpieza al intentar buscar por id, bloqueo campo dni.
     private void JRBidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRBidActionPerformed
         borrarFilas();
@@ -448,23 +449,23 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         cargarDatos();
         limpiar();
     }//GEN-LAST:event_JRBidActionPerformed
-    
+
     //Guardar un alumno.
     private void JBguardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBguardarActionPerformed
-        try{
+        try {
             //Variables para almacenar los datos extraidos.
             String dniTexto = JTFdni.getText().trim();
             String nombre = JTFnombre.getText().trim();
             LocalDate fechaNacimiento = JDCfechaNac.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             boolean activo = JCactivo.isSelected();
             Alumno a;
-            
+
             //Varibales para la verificacion de datos.
             int longitudDni = dniTexto.length();
             boolean disparador = true;
             LocalDate fechaActual = LocalDate.now();
             LocalDate fechaMaxima = fechaActual.minusYears(16);
-            
+
             //Verificacion de datos.
             if (longitudDni == 7 || longitudDni == 8) { //Verficacion de DNI (cantidad de digitos).
                 int dni = Integer.parseInt(dniTexto);
@@ -485,33 +486,33 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
                         } else {
                             JOptionPane.showMessageDialog(this, "Fecha no admitida", "ERROR", JOptionPane.ERROR_MESSAGE);
                         }
-                    }else {
+                    } else {
                         JOptionPane.showMessageDialog(this, "Nombre invalido", "ERROR", JOptionPane.ERROR_MESSAGE);
                     }
-                }else {
+                } else {
                     JOptionPane.showMessageDialog(this, "Este DNI ya se encuentra registrado", "ERROR", JOptionPane.ERROR_MESSAGE);
                 }
-            }else {
+            } else {
                 JOptionPane.showMessageDialog(this, "DNI invalido, debe contener una combinacion de 7-8 numeros,\nse aceptan solo numeros, sin puntos y espacios", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
-            
-        }catch(NumberFormatException nf){
+
+        } catch (NumberFormatException nf) {
             JOptionPane.showMessageDialog(this, "Datos incompletos/incorrectos", "ERROR", JOptionPane.ERROR_MESSAGE);
-        }catch (NullPointerException np){
+        } catch (NullPointerException np) {
             JOptionPane.showMessageDialog(this, "Fecha invalida", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_JBguardarActionPerformed
-    
+
     //Dar de baja a un alumno.
     private void JBbajaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBbajaActionPerformed
         int filaS = JTalumnos.getSelectedRow();
         if (filaS != -1) { //Solo entra si hay una fila seleccionada.
             int id = (int) JTalumnos.getValueAt(filaS, 0);
             boolean estado = (boolean) JTalumnos.getValueAt(filaS, 4);
-            if(estado){
+            if (estado) {
                 ad.altaBajaLogica(id, false);
                 for (Alumno a : allAlumnos) { //Recorre el ArrayList para verificar si el alumno esta dado de baja o alta.
-                    if(a.getIdAlumno() == id){
+                    if (a.getIdAlumno() == id) {
                         a.setActivo(false);
                         modelo.setValueAt(false, filaS, 4);
                         JCactivo.setSelected(false);
@@ -519,14 +520,14 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
                     }
                 }
                 JOptionPane.showMessageDialog(this, "El alumno ha sido dado de baja con exito!");
-            }else{
+            } else {
                 JOptionPane.showMessageDialog(this, "No puede dar de baja a un alumno que ya lo esta! :b", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
-        }else{
+        } else {
             JOptionPane.showMessageDialog(this, "Debe seleccionar una fila", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_JBbajaActionPerformed
-    
+
     //Dar de alta a un alumno.
     private void JBaltaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBaltaActionPerformed
         int filaS = JTalumnos.getSelectedRow();
@@ -534,7 +535,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
             int id = (int) JTalumnos.getValueAt(filaS, 0);
             boolean estado = (boolean) JTalumnos.getValueAt(filaS, 4);
             if (estado) {
-                JOptionPane.showMessageDialog(this, "No puede dar de alta a un alumno que ya lo esta! :b", "ERROR", JOptionPane.ERROR_MESSAGE); 
+                JOptionPane.showMessageDialog(this, "No puede dar de alta a un alumno que ya lo esta! :b", "ERROR", JOptionPane.ERROR_MESSAGE);
             } else {
                 ad.altaBajaLogica(id, true);
                 for (Alumno a : allAlumnos) { //Recorre el ArrayList para verificar si el alumno esta dado de baja o alta.
@@ -556,17 +557,17 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
     private void JDCfechaNacPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_JDCfechaNacPropertyChange
         habilitarGuardar();
     }//GEN-LAST:event_JDCfechaNacPropertyChange
-    
+
     //Para habilitar el boton guardar cuando interactua con el campo de nombre.
     private void JTFnombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTFnombreKeyTyped
         habilitarGuardar();
     }//GEN-LAST:event_JTFnombreKeyTyped
-    
+
     //Para habilitar el boton guardar cuando interactua con el campo de DNI.
     private void JTFdniKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTFdniKeyTyped
         habilitarGuardar();
     }//GEN-LAST:event_JTFdniKeyTyped
-    
+
     //Permite actualizar los datos de un alumno.
     private void JBactualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBactualizarActionPerformed
         try {
@@ -583,61 +584,61 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
             LocalDate fechaActual = LocalDate.now();
             LocalDate fechaMaxima = fechaActual.minusYears(16);
             int filaS = JTalumnos.getSelectedRow();
-        
-        //Verificacion de datos.    
-        if (filaS != -1) { //Todo funcionara si hay una fila seleccionada.
-            int id = (int) JTalumnos.getValueAt(filaS, 0);
-            if (longitudDni == 7 || longitudDni == 8) { //Verficacion de DNI (cantidad de digitos).
-                int dni = Integer.parseInt(dniTexto);
-                for (Alumno alu : allAlumnos) { //Recorre el Arraylist para verficacion de DNI repetido, evita el DNI del alumno seleccionado.
-                    if (alu.getIdAlumno() == id) {
-                        continue;
+
+            //Verificacion de datos.    
+            if (filaS != -1) { //Todo funcionara si hay una fila seleccionada.
+                int id = (int) JTalumnos.getValueAt(filaS, 0);
+                if (longitudDni == 7 || longitudDni == 8) { //Verficacion de DNI (cantidad de digitos).
+                    int dni = Integer.parseInt(dniTexto);
+                    for (Alumno alu : allAlumnos) { //Recorre el Arraylist para verficacion de DNI repetido, evita el DNI del alumno seleccionado.
+                        if (alu.getIdAlumno() == id) {
+                            continue;
+                        }
+                        if (alu.getDni() == dni) {
+                            disparador = false;
+                            break;
+                        }
                     }
-                    if(alu.getDni() == dni){
-                        disparador = false;
-                        break;
-                    }
-                }
-                if (disparador) { //Verficacion de DNI repetido.
-                    if (nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$")) { //Verficacion de nombre. Funcion que fue investigada, permite que solo acepte letras de la a-z, "Ñ" y tildes (no acepta espacios).
-                        if (fechaNacimiento.isBefore(fechaMaxima) || fechaNacimiento.isEqual(fechaMaxima)) { //Verificacion de fecha de nacimiento.
-                            a = new Alumno(dni, nombre, fechaNacimiento, activo);
-                            a.setIdAlumno(id);
-                            for (Alumno act : allAlumnos) { //Actualizacion del alumno en el ArrayList para actualizar la tabla.
-                                if(act.getIdAlumno() == id){
-                                    if(act.getDni() != dni){
-                                        act.setDni(dni);
-                                        modelo.setValueAt(dni, filaS, 1);
+                    if (disparador) { //Verficacion de DNI repetido.
+                        if (nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$")) { //Verficacion de nombre. Funcion que fue investigada, permite que solo acepte letras de la a-z, "Ñ" y tildes (no acepta espacios).
+                            if (fechaNacimiento.isBefore(fechaMaxima) || fechaNacimiento.isEqual(fechaMaxima)) { //Verificacion de fecha de nacimiento.
+                                a = new Alumno(dni, nombre, fechaNacimiento, activo);
+                                a.setIdAlumno(id);
+                                for (Alumno act : allAlumnos) { //Actualizacion del alumno en el ArrayList para actualizar la tabla.
+                                    if (act.getIdAlumno() == id) {
+                                        if (act.getDni() != dni) {
+                                            act.setDni(dni);
+                                            modelo.setValueAt(dni, filaS, 1);
+                                        }
+                                        if (!act.getNombre().equals(nombre)) {
+                                            act.setNombre(nombre);
+                                            modelo.setValueAt(nombre, filaS, 2);
+                                        }
+                                        if (!act.getFechaNac().equals(fechaNacimiento)) {
+                                            act.setFechaNac(fechaNacimiento);
+                                            modelo.setValueAt(fechaNacimiento, filaS, 3);
+                                        }
+                                        break;
                                     }
-                                    if(!act.getNombre().equals(nombre)){
-                                        act.setNombre(nombre);
-                                        modelo.setValueAt(nombre, filaS, 2);
-                                    }
-                                    if(!act.getFechaNac().equals(fechaNacimiento)){
-                                        act.setFechaNac(fechaNacimiento);
-                                        modelo.setValueAt(fechaNacimiento, filaS, 3);
-                                    }
-                                    break;
                                 }
+                                ad.actualizarAlumno(a);
+                                limpiar();
+                                JOptionPane.showMessageDialog(this, "Alumno actualizado!");
+                            } else {
+                                JOptionPane.showMessageDialog(this, "Fecha no admitida", "ERROR", JOptionPane.ERROR_MESSAGE);
                             }
-                            ad.actualizarAlumno(a);
-                            limpiar();
-                            JOptionPane.showMessageDialog(this, "Alumno actualizado!");
                         } else {
-                            JOptionPane.showMessageDialog(this, "Fecha no admitida", "ERROR", JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.showMessageDialog(this, "Nombre invalido", "ERROR", JOptionPane.ERROR_MESSAGE);
                         }
                     } else {
-                        JOptionPane.showMessageDialog(this, "Nombre invalido", "ERROR", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Este DNI ya se encuentra registrado", "ERROR", JOptionPane.ERROR_MESSAGE);
                     }
                 } else {
-                    JOptionPane.showMessageDialog(this, "Este DNI ya se encuentra registrado", "ERROR", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "DNI invalido, debe contener una combinacion de 7-8 numeros,\nse aceptan solo numeros, sin puntos y espacios", "ERROR", JOptionPane.ERROR_MESSAGE);
                 }
             } else {
-                JOptionPane.showMessageDialog(this, "DNI invalido, debe contener una combinacion de 7-8 numeros,\nse aceptan solo numeros, sin puntos y espacios", "ERROR", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Debe seleccionar una fila para actualizar", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
-        } else {
-            JOptionPane.showMessageDialog(this, "Debe seleccionar una fila para actualizar", "ERROR", JOptionPane.ERROR_MESSAGE);
-        }
 
         } catch (NumberFormatException nf) {
             JOptionPane.showMessageDialog(this, "Datos incompletos/incorrectos", "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -675,9 +676,10 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
     private javax.swing.JTable JTalumnos;
     private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
-   
+
     /**
      * Permite redimensionar a gusto las imagenes.
+     *
      * @param ruta
      * @param ancho
      * @param alto
@@ -690,7 +692,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
 
         return new ImageIcon(imagenRedimensionada);
     }
-    
+
     /**
      * Vacia/restablece todos los campos.
      */
@@ -708,7 +710,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         JBborrar.setEnabled(false);
         JBactualizar.setEnabled(false);
     }
-    
+
     /**
      * Agrega las cabeceras a la tabla con sus respectivos nombres.
      */
@@ -721,12 +723,12 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
 
         JTalumnos.setModel(modelo);
     }
-    
-    private void mostrarLista(){
+
+    private void mostrarLista() {
         System.out.println(allAlumnos);
         //System.out.println(allAlumnos2);
     }
-    
+
     /**
      * Carga los alumnos a la tabla.
      */
@@ -735,26 +737,26 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
             modelo.addRow(new Object[]{a.getIdAlumno(), a.getDni(), a.getNombre(), a.getFechaNac(), a.getActivo()});
         }
     }
-    
+
     /**
      * Permite borrar las filas mientras se encribe en los campos de filtrar.
-     */ 
-    private void borrarFilas(){
-        int filas = JTalumnos.getRowCount() -1;
+     */
+    private void borrarFilas() {
+        int filas = JTalumnos.getRowCount() - 1;
         for (int f = filas; f >= 0; f--) {
             modelo.removeRow(f);
         }
     }
-    
+
     /**
      * Compruba si todos los campos (nombre, dni y fecha) estan llenos, si lo
      * estan se activa el boton guardar.
      */
-    private void habilitarGuardar(){
+    private void habilitarGuardar() {
         boolean fechaLlena = JDCfechaNac.getDate() != null;
-        if(!JTFnombre.getText().trim().isEmpty() && !JTFdni.getText().trim().isEmpty() && fechaLlena ){
+        if (!JTFnombre.getText().trim().isEmpty() && !JTFdni.getText().trim().isEmpty() && fechaLlena) {
             JBguardar.setEnabled(true);
-        }else{
+        } else {
             JBguardar.setEnabled(false);
         }
     }

@@ -5,6 +5,7 @@ import Persistencia.MateriaData;
 import java.awt.Image;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
@@ -12,43 +13,43 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class FormularioMaterias extends javax.swing.JInternalFrame {
-    
+
     //Crea el modelo por default y sobrescribe el metodo de la clase para hacer que las celdas no sean editabes.
-    private DefaultTableModel modelo = new DefaultTableModel(){
+    private DefaultTableModel modelo = new DefaultTableModel() {
         @Override
-        public boolean isCellEditable(int f, int c){
+        public boolean isCellEditable(int f, int c) {
             return false;
         }
     };
-    
+
     //Creacion de un objeto AlumnoData y el ArrayList donde estaran todos las materias traidas de la base de datos.
     MateriaData md;
     List<Materia> allMaterias = new ArrayList<>();
-    
+
     public FormularioMaterias() {
         initComponents();
         UtilidadesGenerales.ocultarMenu(this);
-        
+
         //Este conjunto permite que solo se pueda buscar una materia por sola una opcion (id o nombre).
         JRBid.setSelected(true);
         BGfiltrar.add(JRBid);
         BGfiltrar.add(JRBnombre);
         JTFbuscarNombre.setEnabled(false);
-        
+
         //Inicializa el objeto de tipo MateriaData y carga el ArrayList de materias (allMaterias).
         try {
             md = new MateriaData();
             allMaterias = md.listarMaterias();
         } catch (ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(this, "Error al cargar los drivers", "ERROR", JOptionPane.ERROR_MESSAGE);
-        } catch (SQLException ex){
+        } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Error al establecer la conexion con la base de datos", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
-        
+
         cargarCabecera();
         cargarDatos();
         mostrarMaterias();
-        
+
         //Redimensionar iconos con el metodo.
         JBborrar.setIcon(redimensionIcon("/Imagen/eliminar.png", 25, 25));
         JBactualizar.setIcon(redimensionIcon("/Imagen/actualizar.png", 25, 25));
@@ -106,6 +107,11 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
         JBborrar.setFont(new java.awt.Font("Dubai Medium", 1, 12)); // NOI18N
         JBborrar.setText("Borrar");
         JBborrar.setEnabled(false);
+        JBborrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JBborrarActionPerformed(evt);
+            }
+        });
 
         JBactualizar.setFont(new java.awt.Font("Dubai Medium", 1, 12)); // NOI18N
         JBactualizar.setText("Actualizar");
@@ -121,9 +127,19 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
 
         JBalta.setFont(new java.awt.Font("Dubai Medium", 1, 12)); // NOI18N
         JBalta.setText("Dar de Alta");
+        JBalta.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JBaltaActionPerformed(evt);
+            }
+        });
 
         JBbaja.setFont(new java.awt.Font("Dubai Medium", 1, 12)); // NOI18N
         JBbaja.setText("Dar de Baja");
+        JBbaja.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JBbajaActionPerformed(evt);
+            }
+        });
 
         JLbuscarMateria.setFont(new java.awt.Font("Dubai Medium", 1, 20)); // NOI18N
         JLbuscarMateria.setText("Buscar Materia");
@@ -300,12 +316,12 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
+
     //Limpia todo.
     private void JBlimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBlimpiarActionPerformed
         limpiar();
     }//GEN-LAST:event_JBlimpiarActionPerformed
-    
+
     //Eliminar elementos de la tabla mientras se busca (por id).
     private void JTFidKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTFidKeyReleased
         borrarFilas();
@@ -316,7 +332,7 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
             }
         }
     }//GEN-LAST:event_JTFidKeyReleased
-    
+
     //Eliminar elementos de la tabla mientras se busca (por nombre).
     private void JTFbuscarNombreKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTFbuscarNombreKeyReleased
         borrarFilas();
@@ -327,7 +343,7 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
             }
         }
     }//GEN-LAST:event_JTFbuscarNombreKeyReleased
-    
+
     //Limpieza al intentar buscar por nombre, bloqueo campo id.
     private void JRBnombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRBnombreActionPerformed
         borrarFilas();
@@ -336,7 +352,7 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
         cargarDatos();
         limpiar();
     }//GEN-LAST:event_JRBnombreActionPerformed
-    
+
     //Limpieza al intentar buscar por id, bloqueo campo nombre.
     private void JRBidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRBidActionPerformed
         borrarFilas();
@@ -345,22 +361,97 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
         cargarDatos();
         limpiar();
     }//GEN-LAST:event_JRBidActionPerformed
-    
+
     //Rellenar los campos al hacer click en la tabla.
     private void JTmateriasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JTmateriasMouseClicked
         int filaS = JTmaterias.getSelectedRow();
-        if(filaS != -1){
+        if (filaS != -1) {
             String nombre = (String) JTmaterias.getValueAt(filaS, 1);
             boolean estado = (boolean) JTmaterias.getValueAt(filaS, 2);
-            
+
             JTFnombre.setText(nombre);
             JCestado.setSelected(estado);
         }
-        
+
         JBborrar.setEnabled(true);
         JBactualizar.setEnabled(true);
         JCestado.setEnabled(false);
     }//GEN-LAST:event_JTmateriasMouseClicked
+
+    private void JBaltaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBaltaActionPerformed
+        int filaS = JTmaterias.getSelectedRow(); // Traer la fila en la que estoy seleccionado
+        if (filaS != -1) {
+            int id = (int) JTmaterias.getValueAt(filaS, 0);
+            boolean estado = (boolean) JTmaterias.getValueAt(filaS, 2);
+            if (estado) {
+                JOptionPane.showMessageDialog(this, "No puede dar de alta a una materia que ya lo esta! :b", "ERROR", JOptionPane.ERROR_MESSAGE);
+            } else {
+                md.altaBajaLogica(id, true);
+                for (Materia m : allMaterias) { //Recorre el ArrayList para verificar si el alumno esta dado de baja o alta.
+                    if (m.getIdMateria() == id) {
+                        m.setEstado(true);
+                        modelo.setValueAt(true, filaS, 2);
+                        JCestado.setSelected(true);
+                        break;
+                    }
+                }
+                JOptionPane.showMessageDialog(this, "La materia se ha dado de alta exitosamente");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar una fila", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_JBaltaActionPerformed
+
+    private void JBbajaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBbajaActionPerformed
+        int filaS = JTmaterias.getSelectedRow();
+        if (filaS != -1) { //Solo entra si hay una fila seleccionada.
+            int id = (int) JTmaterias.getValueAt(filaS, 0);
+            boolean estado = (boolean) JTmaterias.getValueAt(filaS, 2);
+            if (estado) {
+                md.altaBajaLogica(id, false);
+                for (Materia m : allMaterias) { //Recorre el ArrayList para verificar si la materia esta dada de baja o alta.
+                    if (m.getIdMateria() == id) {
+                        m.setEstado(false);
+                        modelo.setValueAt(false, filaS, 2);
+                        JCestado.setSelected(false);
+                        break;
+                    }
+                }
+                JOptionPane.showMessageDialog(this, "La materia ha sido dada de baja con éxito!");
+            } else {
+                JOptionPane.showMessageDialog(this, "No puede dar de baja a una materia que ya lo esta! :b", "ERROR", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar una fila", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_JBbajaActionPerformed
+
+    private void JBborrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBborrarActionPerformed
+
+        Iterator<Materia> it = allMaterias.iterator(); // Se crea para borrar la materia del ArrayList.
+        int respuesta = JOptionPane.showConfirmDialog(this, "¿Desea eliminar la materia?", "Advertencia", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        int filaS = JTmaterias.getSelectedRow(); // Obtiene el indice de la fila que el usuario selecciono en la tabla.
+        if (filaS != -1) {
+            int id = (int) JTmaterias.getValueAt(filaS, 0); // Obtiene el valor que se encuentra en esa fila justo en esa columna.
+            if (respuesta == JOptionPane.YES_OPTION) { //Si la respuesta fue "Si".
+                while (it.hasNext()) {
+                    if (it.next().getIdMateria() == id) { //Se fija que el valor del idMateria coincide con el valor extraido de esa fila seleccionada en la columna idMateria.
+                        it.remove(); //Si coincide lo elimina.
+                        break;
+                    }
+                }
+                md.borrarMateria(id); //Ejecuta el metodo de MateriaData para borrar la materia de la base de datos.
+                
+                modelo.removeRow(filaS); //Elimina la materia seleccionado de la tabla.
+                limpiar(); //Limpia todo al terminar.
+                JOptionPane.showMessageDialog(this, "Materia eliminada!");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar una fila", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+
+
+    }//GEN-LAST:event_JBborrarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -388,13 +479,14 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
     private javax.swing.JTable JTmaterias;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
-  
+
     /**
      * Permite redimensionar a gusto las imagenes.
+     *
      * @param ruta
      * @param ancho
      * @param alto
-     * @return 
+     * @return
      */
     private ImageIcon redimensionIcon(String ruta, int ancho, int alto) {
         ImageIcon icono = new ImageIcon(getClass().getResource(ruta));
@@ -403,7 +495,7 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
 
         return new ImageIcon(imagenRedimensionada);
     }
-    
+
     /**
      * Vacia/restablece todos los campos.
      */
@@ -418,7 +510,7 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
         JBborrar.setEnabled(false);
         JBactualizar.setEnabled(false);
     }
-    
+
     /**
      * Agrega las cabeceras a la tabla con sus respectivos nombres.
      */
@@ -429,28 +521,28 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
 
         JTmaterias.setModel(modelo);
     }
-    
+
     /**
-    * Permite borrar las filas mientras se encribe en los campos de filtrar.
-    */ 
-    private void borrarFilas(){
-        int filas = JTmaterias.getRowCount() -1;
+     * Permite borrar las filas mientras se encribe en los campos de filtrar.
+     */
+    private void borrarFilas() {
+        int filas = JTmaterias.getRowCount() - 1;
         for (int f = filas; f >= 0; f--) {
             modelo.removeRow(f);
         }
     }
-    
+
     /**
-    * Carga los alumnos a la tabla.
-    */
+     * Carga los alumnos a la tabla.
+     */
     private void cargarDatos() {
         for (Materia m : allMaterias) {
             modelo.addRow(new Object[]{m.getIdMateria(), m.getNombre(), m.getEstado()});
         }
     }
-    
-    private void mostrarMaterias(){
+
+    private void mostrarMaterias() {
         System.out.println(allMaterias);
     }
-    
+
 }
