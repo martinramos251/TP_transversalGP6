@@ -1,5 +1,9 @@
 package Vista;
 
+import Entidades.Cursada;
+import Persistencia.CursadaData;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.table.DefaultTableModel;
 
 public class InscribirAlumno extends javax.swing.JInternalFrame {
@@ -17,15 +21,23 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
             return false;
         }
     };
-    
+
+    CursadaData cd;
+    List<Cursada> allCursadas = new ArrayList<>();
     public InscribirAlumno() {
         initComponents();
         UtilidadesGenerales.ocultarMenu(this);
-        
+
         BGinscripto.add(JRBinscriptas);
         BGinscripto.add(JRBnoInscriptas);
-        
+
         cargarCabeceras();
+        
+        try {
+            cd = new CursadaData();
+        } catch (Exception e) {
+        }
+          
     }
 
     @SuppressWarnings("unchecked")
@@ -292,12 +304,12 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
-    
+
     //Agrega las cabeceras a las tablas.
     private void cargarCabeceras() {
         modelo.addColumn("idMateria");
         modelo.addColumn("Materia");
-        
+
         modelo2.addColumn("idAlumno");
         modelo2.addColumn("Dni");
         modelo2.addColumn("Nombre");

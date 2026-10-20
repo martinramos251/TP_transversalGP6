@@ -127,7 +127,28 @@ public class CursadaData {
         } catch (SQLException ex) {
             System.out.println("No se pudo eliminar la cursada/inscripcion");
         }
+    }
 
+    /**
+     * Borrar inscripción por idAlumno
+     *
+     * @param idAlumno
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     */
+    public void borrarInscripcion(int idAlumno) throws SQLException, ClassNotFoundException {
+        AlumnoData ad = new AlumnoData();
+        Alumno a = ad.buscarAlumno(idAlumno);
+
+        String sql = "DELETE FROM cursada WHERE idAlumno = ?";
+        try (PreparedStatement ps = conect.prepareStatement(sql)) {
+            ps.setInt(1, a.getIdAlumno());
+            ps.executeUpdate();
+
+            System.out.println("Cursada/inscripcion eliminada correctamente");
+        } catch (SQLException ex) {
+            System.out.println("No se pudo eliminar la cursada/inscripcion");
+        }
     }
 
     //Obtener las inscripciones de los alumnos a una sola materia.

@@ -28,7 +28,6 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
 
     //Creacion de un objeto AlumnoData y el ArrayList donde estaran todos las materias traidas de la base de datos.
     MateriaData md;
-    CursadaData cd;
     List<Materia> allMaterias = new ArrayList<>();
 
     public FormularioMaterias() {
@@ -44,7 +43,6 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
         //Inicializa el objeto de tipo MateriaData y carga el ArrayList de materias (allMaterias).
         try {
             md = new MateriaData();
-            cd = new CursadaData();
             allMaterias = md.listarMaterias();
         } catch (ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(this, "Error al cargar los drivers", "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -429,6 +427,7 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
         if (filaS != -1) { //Solo entra si hay una fila seleccionada.
             int id = (int) JTmaterias.getValueAt(filaS, 0);
             boolean estado = (boolean) JTmaterias.getValueAt(filaS, 2);
+            String nombreMateria = (String) JTmaterias.getValueAt(filaS, 1);
             if (estado) {
                 md.altaBajaLogica(id, false);
                 for (Materia m : allMaterias) { //Recorre el ArrayList para verificar si la materia esta dada de baja o alta.
@@ -438,6 +437,13 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
                         JCestado.setSelected(false);
                         break;
                     }
+                }
+                try {
+                    Menu.cd.borrarInscripcion(nombreMateria);
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Error al establecer la conexion con la base de datos", "ERROR", JOptionPane.ERROR_MESSAGE);
+                } catch (ClassNotFoundException ex) {
+                    JOptionPane.showMessageDialog(null, "Error al cargar los drivers", "ERROR", JOptionPane.ERROR_MESSAGE);
                 }
                 JOptionPane.showMessageDialog(this, "La materia ha sido dada de baja con éxito!");
             } else {
@@ -449,8 +455,6 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_JBbajaActionPerformed
 
     private void JBborrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBborrarActionPerformed
-        Iterator<Cursada> itCursada = Menu.allCursadas.iterator(); // se crea para borrar la cursada del ArrayList
-
         Iterator<Materia> it = allMaterias.iterator(); // Se crea para borrar la materia del ArrayList.
         int respuesta = JOptionPane.showConfirmDialog(this, "¿Desea eliminar la materia?", "Advertencia", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
         int filaS = JTmaterias.getSelectedRow(); // Obtiene el indice de la fila que el usuario selecciono en la tabla.
@@ -466,12 +470,13 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
                 }
 
                 try {
-                    cd.borrarInscripcion(nombreMateria);
+                    Menu.cd.borrarInscripcion(nombreMateria.toLowerCase());
                 } catch (SQLException ex) {
                     Logger.getLogger(FormularioMaterias.class.getName()).log(Level.SEVERE, null, ex);
                 } catch (ClassNotFoundException ex) {
                     Logger.getLogger(FormularioMaterias.class.getName()).log(Level.SEVERE, null, ex);
                 }
+
                 md.borrarMateria(id); //Ejecuta el metodo de MateriaData para borrar la materia de la base de datos.
                 modelo.removeRow(filaS); //Elimina la materia seleccionado de la tabla.
                 limpiar(); //Limpia todo al terminar.
@@ -505,7 +510,7 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
                 }
             }
             if (disparador) {
-                if (nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$")) { //Verificacion de nombre. Funcion que fue investigada, permite que solo acepte letras de la a-z, "Ñ" y tildes (no acepta espacios).
+                if (nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")) { //Verificacion de nombre. Funcion que fue investigada, permite que solo acepte letras de la a-z, "Ñ" y tildes (no acepta espacios).
                     m = new Materia(nombre, activo);
                     md.guardarMateria(m);
                     allMaterias.add(m);
@@ -545,7 +550,7 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
 
                 }
                 if (disparador) {
-                    if (nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$")) { //Verficacion de nombre. Funcion que fue investigada, permite que solo acepte letras de la a-z, "Ñ" y tildes (no acepta espacios).
+                    if (nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")) { //Verficacion de nombre. Funcion que fue investigada, permite que solo acepte letras de la a-z, "Ñ" y tildes (no acepta espacios).
                         m = new Materia(nombre, activo);
                         m.setIdMateria(id);
                         for (Materia act : allMaterias) { //Actualizacion del alumno en el ArrayList para actualizar la tabla.
@@ -562,6 +567,8 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
                         md.actualizarMateria(m);
                         limpiar();
                         JOptionPane.showMessageDialog(this, "Materia actualizada!");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Nombre inválido", "ERROR", JOptionPane.ERROR_MESSAGE);
                     }
                 }
 

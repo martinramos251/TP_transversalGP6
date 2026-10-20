@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -374,6 +376,15 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
                         break;
                     }
                 }
+
+                try {
+                    Menu.cd.borrarInscripcion(id);
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Error al establecer la conexion con la base de datos", "ERROR", JOptionPane.ERROR_MESSAGE);
+                } catch (ClassNotFoundException ex) {
+                    JOptionPane.showMessageDialog(null, "Error al cargar los drivers", "ERROR", JOptionPane.ERROR_MESSAGE);
+                }
+
                 ad.borrarAlumno(id); //Ejecuta el metodo de AlumnoData para borrar al alumno de la base de datos.
                 modelo.removeRow(filaS); //Elimina al alumno seleccionado de la tabla.
                 limpiar(); //Limpia todo al terminar.
@@ -518,6 +529,13 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
                         JCactivo.setSelected(false);
                         break;
                     }
+                }
+                try {
+                    Menu.cd.borrarInscripcion(id);
+                } catch (SQLException ex) {
+                    JOptionPane.showMessageDialog(null, "Error al establecer la conexion con la base de datos", "ERROR", JOptionPane.ERROR_MESSAGE);
+                } catch (ClassNotFoundException ex) {
+                    JOptionPane.showMessageDialog(null, "Error al cargar los drivers", "ERROR", JOptionPane.ERROR_MESSAGE);
                 }
                 JOptionPane.showMessageDialog(this, "El alumno ha sido dado de baja con exito!");
             } else {
