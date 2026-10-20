@@ -43,9 +43,19 @@ public class GP6_Universidad {
 //            alu.guardarAlumno(cami);
 
             /* CARGA DE MATERIAS */
-//            Materia lengua = new Materia("Lengua", true);
+//            Materia mat = new Materia("Lengua", true);
+//            Materia mat2 = new Materia("Matematicas", true);
+//           Materia mat3 = new Materia("Lab Programacion", true);
+//            Materia mat4 = new Materia("Programacion Web I", true);
+//            Materia mat5 = new Materia("Redes", true);
+//            Materia mat6 = new Materia("Base de Datos", true);
+//            md.guardarMateria(mat);
+//            md.guardarMateria(mat2);
+//            md.guardarMateria(mat3);
+//            md.guardarMateria(mat4);
+//            md.guardarMateria(mat5);
+//            md.guardarMateria(mat6);
 //           Materia lenguaId = md.buscarMateria(2);
-//            md.guardarMateria(lengua);
 //            lengua.setIdMateria(md.buscarMateria(2).getIdMateria());
 //          Dar de alta o baja
 //         alu.altaBajaLogica(18, false);
@@ -63,10 +73,10 @@ public class GP6_Universidad {
            //System.out.println(cd.listarInscripciones());
             System.out.println(alu.listarAlumnos());
 
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Error de conexion" + ex.getMessage());
-        } catch (ClassNotFoundException cargar) {
-            JOptionPane.showMessageDialog(null, "Error al cargar Driver" + cargar.getMessage());
+        } catch (ClassNotFoundException cnf) {
+            JOptionPane.showMessageDialog(null, "Error al cargar los drivers", "ERROR", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException sqle) {
+            JOptionPane.showMessageDialog(null, "Error al establecer la conexion con la base de datos", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }
 }

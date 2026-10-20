@@ -16,7 +16,6 @@ public class MateriaData {
         conect = MiConexion.buscarConexion();
     }
 
-
     public void guardarMateria(Materia m) {
         String sql = "INSERT INTO materia (nombre, estado) VALUES (?,?)";
         try (PreparedStatement ps = conect.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
