@@ -8,7 +8,10 @@ import javax.swing.JInternalFrame;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 
 public class UtilidadesGenerales {
-    //Permite ocultar la felchita que se encuentra en la barra de la ventana arriba a la izquierda de los JInternalFrames.
+    /**
+     * Permite ocultar la felchita que se encuentra en la barra de la ventana arriba a la izquierda de los JInternalFrames.
+     * @param frame 
+     */
     static void ocultarMenu(JInternalFrame frame) {
         BasicInternalFrameUI ui = (BasicInternalFrameUI) frame.getUI();
         JComponent barra = ui.getNorthPane();

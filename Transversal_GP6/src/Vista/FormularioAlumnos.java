@@ -23,17 +23,14 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         }
     };
     
-    boolean tNombre = false;
-    boolean tDni = false;
-    boolean tFecha = false;
-    
     //Creacion de un objeto AlumnoData y el ArrayList donde estaran todos los alumnos.
     AlumnoData ad;
     List<Alumno> allAlumnos = new ArrayList<>();
     
-    /* Creacion del ArrayList donde estaran todos los alumnos al momento de aprentar el boton "guardar", 
-    despues se cargaran a la base de datos cuando se aprete el boton "actualizar". */
-    List<Alumno> allAlumnos2 = new ArrayList<>();
+    int dniCopy;
+    String nombreCopy;
+    LocalDate fechaNacimientoCopy;
+    boolean activoCopy;
 
     public FormularioAlumnos() {
         initComponents();
@@ -58,7 +55,6 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         mostrarLista();
         cargarCabecera();
         cargarDatos();
-        
         //Redimensionar iconos con el metodo.
         JBborrar.setIcon(redimensionIcon("/Imagen/eliminar.png", 25, 25));
         JBactualizar.setIcon(redimensionIcon("/Imagen/actualizar.png", 25, 25));
@@ -181,11 +177,6 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         JLnombre.setFont(new java.awt.Font("Dubai Medium", 1, 16)); // NOI18N
         JLnombre.setText("NOMBRE:");
 
-        JTFnombre.addCaretListener(new javax.swing.event.CaretListener() {
-            public void caretUpdate(javax.swing.event.CaretEvent evt) {
-                JTFnombreCaretUpdate(evt);
-            }
-        });
         JTFnombre.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 JTFnombreKeyTyped(evt);
@@ -229,6 +220,11 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         JBactualizar.setFont(new java.awt.Font("Dubai Medium", 1, 12)); // NOI18N
         JBactualizar.setText("Actualizar");
         JBactualizar.setEnabled(false);
+        JBactualizar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JBactualizarActionPerformed(evt);
+            }
+        });
 
         JBlimpiar.setFont(new java.awt.Font("Dubai Medium", 1, 12)); // NOI18N
         JBlimpiar.setText("Limpiar");
@@ -275,11 +271,6 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         JLdni.setFont(new java.awt.Font("Dubai Medium", 1, 16)); // NOI18N
         JLdni.setText("DNI:");
 
-        JTFdni.addCaretListener(new javax.swing.event.CaretListener() {
-            public void caretUpdate(javax.swing.event.CaretEvent evt) {
-                JTFdniCaretUpdate(evt);
-            }
-        });
         JTFdni.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 JTFdniKeyTyped(evt);
@@ -405,20 +396,20 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
     private void JTalumnosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JTalumnosMouseClicked
         int filaS = JTalumnos.getSelectedRow();
         if(filaS != -1){
-            int dni = (int) JTalumnos.getValueAt(filaS, 1);
-            String nombre = (String) JTalumnos.getValueAt(filaS, 2);
-            LocalDate fechaNacimiento = (LocalDate) JTalumnos.getValueAt(filaS, 3);
-            boolean activo = (boolean) JTalumnos.getValueAt(filaS, 4);
-            Date fechaNac = Date.from(fechaNacimiento.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
+            dniCopy = (int) JTalumnos.getValueAt(filaS, 1);
+            nombreCopy = (String) JTalumnos.getValueAt(filaS, 2);
+            fechaNacimientoCopy = (LocalDate) JTalumnos.getValueAt(filaS, 3);
+            activoCopy = (boolean) JTalumnos.getValueAt(filaS, 4);
+            Date fechaNac = Date.from(fechaNacimientoCopy.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant());
             
-            JTFdni.setText(dni + "");
-            JTFnombre.setText(nombre);
+            JTFdni.setText(dniCopy + "");
+            JTFnombre.setText(nombreCopy);
             JDCfechaNac.setDate(fechaNac);
-            JCactivo.setSelected(activo);
+            JCactivo.setSelected(activoCopy);
         }
         JBborrar.setEnabled(true);
         JBactualizar.setEnabled(true);
-        JBguardar.setEnabled(true);
+        JCactivo.setEnabled(false);
     }//GEN-LAST:event_JTalumnosMouseClicked
     
     //Eliminar elementos de la tabla mientras se busca (por dni).
@@ -445,11 +436,11 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
     
     //Limpieza al intentar buscar por dni.
     private void JRBdniActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRBdniActionPerformed
+        borrarFilas();
         JTFid.setEnabled(false);
         JTFbuscarDni.setEnabled(true);
-        JTFid.setText("");
-        borrarFilas();
         cargarDatos();
+        limpiar();
     }//GEN-LAST:event_JRBdniActionPerformed
     
     //Limpieza al intentar buscar por id.
@@ -457,30 +448,30 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         borrarFilas();
         JTFid.setEnabled(true);
         JTFbuscarDni.setEnabled(false);
-        JTFbuscarDni.setText("");
-        borrarFilas();
         cargarDatos();
+        limpiar();
     }//GEN-LAST:event_JRBidActionPerformed
     
-    //Guardar un alumno (no en la base de datos).
+    //Guardar un alumno.
     private void JBguardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBguardarActionPerformed
         try{
             //Variables para almacenar los datos extraidos.
-            int dni = Integer.parseInt(JTFdni.getText().trim());
+            String dniTexto = JTFdni.getText().trim();
             String nombre = JTFnombre.getText().trim();
             LocalDate fechaNacimiento = JDCfechaNac.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             boolean activo = JCactivo.isSelected();
-            Alumno a = new Alumno(dni, nombre, fechaNacimiento, activo);
+            Alumno a;
             
             //Varibales para la verificacion de datos.
-            int longitudDni = String.valueOf(dni).length();
+            int longitudDni = dniTexto.length();
             boolean disparador = true;
             LocalDate fechaActual = LocalDate.now();
             LocalDate fechaMaxima = fechaActual.minusYears(16);
   
             if (longitudDni == 7 || longitudDni == 8) {
+                int dni = Integer.parseInt(dniTexto);
                 for (Alumno alu : allAlumnos) {
-                    if (alu.getDni() == a.getDni()) {
+                    if (alu.getDni() == dni) {
                         disparador = false;
                         break;
                     }
@@ -488,6 +479,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
                 if (disparador) {
                     if (nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$")) { //Funcion que fue investigada, permite que solo acepte letras de la a-z, "Ñ" y tildes (no acepta espacios).
                         if (fechaNacimiento.isBefore(fechaMaxima) || fechaNacimiento.isEqual(fechaMaxima)) {
+                            a = new Alumno(dni, nombre, fechaNacimiento, activo);
                             ad.guardarAlumno(a);
                             allAlumnos.add(a);
                             limpiar();
@@ -502,7 +494,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
                     JOptionPane.showMessageDialog(this, "Este DNI ya se encuentra registrado", "ERROR", JOptionPane.ERROR_MESSAGE);
                 }
             }else {
-                JOptionPane.showMessageDialog(this, "DNI invalido, debe contener una combinacion de 7-8 numeros", "ERROR", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this, "DNI invalido, debe contener una combinacion de 7-8 numeros,\nse aceptan solo numeros, sin puntos y espacios", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
             mostrarLista();
         }catch(NumberFormatException nf){
@@ -561,38 +553,100 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "Debe seleccionar una fila", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_JBaltaActionPerformed
-    
-    //Detecta que se escribio y activa el boton "guardar", si el campo esta vacio el boton se desactiva.
-    private void JTFnombreCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_JTFnombreCaretUpdate
-        //JBguardar.setEnabled(!JTFnombre.getText().isEmpty());
-    }//GEN-LAST:event_JTFnombreCaretUpdate
-    
-    //Detecta que se escribio y activa el boton "guardar", si el campo esta vacio el boton se desactiva.
-    private void JTFdniCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_JTFdniCaretUpdate
-        //JBguardar.setEnabled(!JTFdni.getText().isEmpty());
-    }//GEN-LAST:event_JTFdniCaretUpdate
-    
+
     //Detecta que se escribio y activa el boton "guardar", si el campo esta vacio el boton se desactiva.
     private void JDCfechaNacPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_JDCfechaNacPropertyChange
-        tFecha = true;
-        if(tDni && tNombre){
-            JBguardar.setEnabled(JDCfechaNac.getDate() != null);
-        }
+        habilitarGuardar();
     }//GEN-LAST:event_JDCfechaNacPropertyChange
 
     private void JTFnombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTFnombreKeyTyped
-        tNombre = true;
-        if(tFecha && tDni){
-            JBguardar.setEnabled(!JTFnombre.getText().isEmpty());
-        }
+        habilitarGuardar();
     }//GEN-LAST:event_JTFnombreKeyTyped
 
     private void JTFdniKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTFdniKeyTyped
-        tDni = true;
-        if(tFecha && tNombre){
-            JBguardar.setEnabled(!JTFdni.getText().isEmpty());
-        }
+        habilitarGuardar();
     }//GEN-LAST:event_JTFdniKeyTyped
+
+    private void JBactualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBactualizarActionPerformed
+        try {
+            //Variables para almacenar los datos extraidos.
+            String dniTexto = JTFdni.getText().trim();
+            String nombre = JTFnombre.getText().trim();
+            LocalDate fechaNacimiento = JDCfechaNac.getDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            boolean activo = JCactivo.isSelected();
+            Alumno a;
+
+            //Varibales para la verificacion de datos.
+            int longitudDni = dniTexto.length();
+            boolean disparador = true;
+            LocalDate fechaActual = LocalDate.now();
+            LocalDate fechaMaxima = fechaActual.minusYears(16);
+            int filaS = JTalumnos.getSelectedRow();
+            
+        if (filaS != -1) {
+            int id = (int) JTalumnos.getValueAt(filaS, 0);
+            if (longitudDni == 7 || longitudDni == 8) {
+                int dni = Integer.parseInt(dniTexto);
+                for (Alumno alu : allAlumnos) {
+                    if (alu.getIdAlumno() == id) {
+                        continue;
+                    }
+                    if(alu.getDni() == dni){
+                        disparador = false;
+                        break;
+                    }
+                }
+                if (disparador) {
+                    if (nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$")) { //Funcion que fue investigada, permite que solo acepte letras de la a-z, "Ñ" y tildes (no acepta espacios).
+                        if (fechaNacimiento.isBefore(fechaMaxima) || fechaNacimiento.isEqual(fechaMaxima)) {
+                            a = new Alumno(dni, nombre, fechaNacimiento, activo);
+                            a.setIdAlumno(id);
+                            for (Alumno act : allAlumnos) {
+                                if(act.getIdAlumno() == id){
+                                    if(act.getDni() != dni){
+                                        act.setDni(dni);
+                                        modelo.setValueAt(dni, filaS, 1);
+                                    }
+                                    if(!act.getNombre().equals(nombre)){
+                                        act.setNombre(nombre);
+                                        modelo.setValueAt(nombre, filaS, 2);
+                                    }
+                                    if(!act.getFechaNac().equals(fechaNacimiento)){
+                                        act.setFechaNac(fechaNacimiento);
+                                        modelo.setValueAt(fechaNacimiento, filaS, 3);
+                                    }
+                                    if(act.getActivo() != activo){
+                                        act.setActivo(activo);
+                                        modelo.setValueAt(activo, filaS, 4);
+                                    }
+                                    break;
+                                }
+                            }
+                            ad.actualizarAlumno(a);
+                            limpiar();
+                            JOptionPane.showMessageDialog(this, "Alumno actualizado!");
+                        } else {
+                            JOptionPane.showMessageDialog(this, "Fecha no admitida", "ERROR", JOptionPane.ERROR_MESSAGE);
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Nombre invalido", "ERROR", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(this, "Este DNI ya se encuentra registrado", "ERROR", JOptionPane.ERROR_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "DNI invalido, debe contener una combinacion de 7-8 numeros,\nse aceptan solo numeros, sin puntos y espacios", "ERROR", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar una fila para actualizar", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+            mostrarLista();
+        } catch (NumberFormatException nf) {
+            JOptionPane.showMessageDialog(this, "Datos incompletos/incorrectos", "ERROR", JOptionPane.ERROR_MESSAGE);
+        } catch (NullPointerException np) {
+            JOptionPane.showMessageDialog(this, "Fecha invalida", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_JBactualizarActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -624,7 +678,13 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
    
-    //Permite redimensionar a gusto las imagenes.
+    /**
+     * Permite redimensionar a gusto las imagenes.
+     * @param ruta
+     * @param ancho
+     * @param alto
+     * @return
+     */
     private ImageIcon redimensionIcon(String ruta, int ancho, int alto) {
         ImageIcon icono = new ImageIcon(getClass().getResource(ruta));
         Image imagen = icono.getImage();
@@ -633,7 +693,9 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         return new ImageIcon(imagenRedimensionada);
     }
     
-    //Vacia/restablece todos los campos.
+    /**
+     * Vacia/restablece todos los campos.
+     */
     private void limpiar() {
         JTFid.setText("");
         JTFdni.setText("");
@@ -641,6 +703,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         JTFbuscarDni.setText("");
         JDCfechaNac.setDate(null);
         JCactivo.setSelected(false);
+        JCactivo.setEnabled(true);
         modelo.setRowCount(0);
         cargarDatos();
         JBguardar.setEnabled(false);
@@ -648,7 +711,9 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         JBactualizar.setEnabled(false);
     }
     
-    //Agrega las cabeceras a la tabla con sus respectivos nombres.
+    /**
+     * Agrega las cabeceras a la tabla con sus respectivos nombres.
+     */
     private void cargarCabecera() {
         modelo.addColumn("idAlumno");
         modelo.addColumn("Dni");
@@ -661,21 +726,38 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
     
     private void mostrarLista(){
         System.out.println(allAlumnos);
-        System.out.println(allAlumnos2);
+        //System.out.println(allAlumnos2);
     }
     
-    //Carga los alumnos a la tabla.
+    /**
+     * Carga los alumnos a la tabla.
+     */
     private void cargarDatos() {
         for (Alumno a : allAlumnos) {
             modelo.addRow(new Object[]{a.getIdAlumno(), a.getDni(), a.getNombre(), a.getFechaNac(), a.getActivo()});
         }
     }
     
-    //Permite borrar las filas mientras se encribe en los campos de filtrar.
+    /**
+     * Permite borrar las filas mientras se encribe en los campos de filtrar.
+     */ 
     private void borrarFilas(){
         int filas = JTalumnos.getRowCount() -1;
         for (int f = filas; f >= 0; f--) {
             modelo.removeRow(f);
+        }
+    }
+    
+    /**
+     * Compruba si todos los campos (nombre, dni y fecha) estan llenos, si lo
+     * estan se activa el boton guardar.
+     */
+    private void habilitarGuardar(){
+        boolean fechaLlena = JDCfechaNac.getDate() != null;
+        if(!JTFnombre.getText().trim().isEmpty() && !JTFdni.getText().trim().isEmpty() && fechaLlena ){
+            JBguardar.setEnabled(true);
+        }else{
+            JBguardar.setEnabled(false);
         }
     }
 }
