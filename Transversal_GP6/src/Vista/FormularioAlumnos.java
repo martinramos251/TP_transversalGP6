@@ -617,10 +617,6 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
                                         act.setFechaNac(fechaNacimiento);
                                         modelo.setValueAt(fechaNacimiento, filaS, 3);
                                     }
-                                    if(act.getActivo() != activo){
-                                        act.setActivo(activo);
-                                        modelo.setValueAt(activo, filaS, 4);
-                                    }
                                     break;
                                 }
                             }
