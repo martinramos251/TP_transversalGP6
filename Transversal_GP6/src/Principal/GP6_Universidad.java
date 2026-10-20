@@ -56,10 +56,10 @@ public class GP6_Universidad {
 //            md.borrarMateria(2);
 //            md.altaBajaLogica(1, false);
 //           System.out.println(md.listarMaterias());
-         Cursada cursa = new Cursada(ad.buscarAlumno(2), md.buscarMateria(4));
-        cd.inscribirAlumnoMateria(cursa);
+//         Cursada cursa = new Cursada(ad.buscarAlumno(2), md.buscarMateria(4));
+//        cd.inscribirAlumnoMateria(cursa);
 //
- //           System.out.println(cd.inscripcionesMateria("Lengua"));
+            System.out.println(cd.inscripcionesMateria("Lengua"));
 
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Error de conexion" + ex.getMessage());

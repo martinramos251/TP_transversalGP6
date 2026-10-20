@@ -113,9 +113,7 @@ public class CursadaData {
         }
 
     }
-
-    //Actualizar a la ultima nota de cursada (obtener).
-    //Mostrar historial de notas de la cursada, de una materia en especifico.
+    
     //Obtener las inscripciones de los alumnos a una sola materia.
     public List<Cursada> inscripcionesMateria(String nombreMateria) throws SQLException, ClassNotFoundException {
         List<Cursada> totalIscripciones = listarInscripciones();
