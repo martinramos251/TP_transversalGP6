@@ -18,6 +18,9 @@ public class CursadaData {
 
     //Inscribe un alumno a una materia
     public void inscribirAlumnoMateria(Cursada c) {
+        if (c.getAlumno().getIdAlumno() == c.getMateria().getIdMateria()) {
+            
+        }
         String sql = "INSERT INTO cursada (idAlumno, idMateria, nota) VALUES (?,?,?)";
         try (PreparedStatement ps = conect.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setInt(1, c.getAlumno().getIdAlumno());

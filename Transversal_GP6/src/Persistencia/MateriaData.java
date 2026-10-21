@@ -92,6 +92,25 @@ public class MateriaData {
         }
         return listaMateria;
     }
+    
+    public List<Materia> listarMateriasAlta() {
+        Materia materia = null;
+        ArrayList<Materia> listaMateria = new ArrayList<>();
+        String sql = "SELECT * FROM materia WHERE estado = true";
+        try (PreparedStatement ps = conect.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                materia = new Materia();
+                materia.setIdMateria(rs.getInt("idMateria"));
+                materia.setNombre(rs.getString("nombre"));
+                materia.setEstado(rs.getBoolean("estado"));
+                listaMateria.add(materia);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al hacer la consulta");
+        }
+        return listaMateria;
+    }
 
     public void actualizarMateria(Materia m) {
         String sql = "UPDATE materia SET nombre = ?, estado = ? WHERE idMateria = ?";

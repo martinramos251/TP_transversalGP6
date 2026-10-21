@@ -363,7 +363,6 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
         borrarFilas();
         JTFid.setEnabled(false);
         JTFbuscarNombre.setEnabled(true);
-        cargarDatos();
         limpiar();
     }//GEN-LAST:event_JRBnombreActionPerformed
 
@@ -372,7 +371,6 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
         borrarFilas();
         JTFid.setEnabled(true);
         JTFbuscarNombre.setEnabled(false);
-        cargarDatos();
         limpiar();
     }//GEN-LAST:event_JRBidActionPerformed
 
@@ -511,14 +509,18 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
             }
             if (disparador) { //Verficacion de nombre repetido.
                 if (nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")) { //Verificacion de nombre. Funcion que fue investigada, permite que solo acepte letras de la a-z, "Ñ", tildes y espacios.
-                    m = new Materia(nombre, activo);
-                    md.guardarMateria(m);
-                    allMaterias.add(m);
-                    limpiar();
-                    mostrarMaterias(); //Muestra las materias para corroborar que se actualizo el ArrayList.
-                    JOptionPane.showMessageDialog(this, "Materia guardada con éxito!");
+                    if (nombre.length() <= 20) { //Verificacion para que el nombre no supere los 20 caracteres admitidos por la base de datos.
+                        m = new Materia(nombre, activo);
+                        md.guardarMateria(m);
+                        allMaterias.add(m);
+                        limpiar();
+                        mostrarMaterias(); //Muestra las materias para corroborar que se actualizo el ArrayList.
+                        JOptionPane.showMessageDialog(this, "Materia guardada con éxito!");
+                    }else{
+                        JOptionPane.showMessageDialog(this, "El nombre debe contener maximo 20 caracteres", "ERROR", JOptionPane.ERROR_MESSAGE);
+                    }
                 } else {
-                    JOptionPane.showMessageDialog(this, "Nombre invalido", "ERROR", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Nombre invalido, no puede contener caracteres especiales o numeros", "ERROR", JOptionPane.ERROR_MESSAGE);
                 }
             }
 
@@ -552,28 +554,31 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
                 }
                 if (disparador) { //Verficacion de nombre repetido.
                     if (nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")) { //Verificacion de nombre. Funcion que fue investigada, permite que solo acepte letras de la a-z, "Ñ", tildes y espacios.
-                        m = new Materia(nombre, activo);
-                        m.setIdMateria(id);
-                        for (Materia act : allMaterias) { //Actualizacion de la materia en el ArrayList para actualizar la tabla.
-                            if (act.getIdMateria() == id) {
-                                if (!act.getNombre().equals(nombre)) {
-                                    act.setNombre(nombre);
-                                    modelo.setValueAt(nombre, filaS, 1);
-                                } else {
-                                    JOptionPane.showMessageDialog(this, "Nombre en uso");
+                        if (nombre.length() <= 20) { //Verificacion para que el nombre no supere los 20 caracteres admitidos por la base de datos.
+                            m = new Materia(nombre, activo);
+                            m.setIdMateria(id);
+                            for (Materia act : allMaterias) { //Actualizacion de la materia en el ArrayList para actualizar la tabla.
+                                if (act.getIdMateria() == id) {
+                                    if (!act.getNombre().equals(nombre)) {
+                                        act.setNombre(nombre);
+                                        modelo.setValueAt(nombre, filaS, 1);
+                                    } else {
+                                        JOptionPane.showMessageDialog(this, "Nombre en uso");
+                                    }
+                                    break;
                                 }
-                                break;
                             }
+                            md.actualizarMateria(m);
+                            limpiar();
+                            mostrarMaterias(); //Muestra las materias para corroborar que se actualizo el ArrayList.
+                            JOptionPane.showMessageDialog(this, "Materia actualizada!");
+                        }else{
+                            JOptionPane.showMessageDialog(this, "El nombre debe contener maximo 20 caracteres", "ERROR", JOptionPane.ERROR_MESSAGE);
                         }
-                        md.actualizarMateria(m);
-                        limpiar();
-                        mostrarMaterias(); //Muestra las materias para corroborar que se actualizo el ArrayList.
-                        JOptionPane.showMessageDialog(this, "Materia actualizada!");
                     } else {
                         JOptionPane.showMessageDialog(this, "Nombre inválido", "ERROR", JOptionPane.ERROR_MESSAGE);
                     }
                 }
-
             } else {
                 JOptionPane.showMessageDialog(this, "Debe seleccionar una fila para actualizar", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
@@ -663,7 +668,7 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
     }
 
     /**
-     * Carga los alumnos a la tabla.
+     * Carga las materias a la tabla.
      */
     private void cargarDatos() {
         for (Materia m : allMaterias) {

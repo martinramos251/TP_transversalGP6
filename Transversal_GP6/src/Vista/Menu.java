@@ -8,7 +8,8 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 public class Menu extends javax.swing.JFrame {
-
+    
+    //Creacion del objeto tipo CursadaData y del ArrayList tipo Cursada.
     static List<Cursada> allCursadas = new ArrayList<>();
     static CursadaData cd;
 

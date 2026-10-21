@@ -8,10 +8,13 @@ import Persistencia.MateriaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-public class InscribirAlumno extends javax.swing.JInternalFrame {  
+public class InscribirAlumno extends javax.swing.JInternalFrame {
+
     //Crea el modelo por default de la tabla para materias y alumnos, sobrescribe el metodo de la clase para hacer que las celdas no sean editabes.
     private DefaultTableModel modeloMateria = new DefaultTableModel() {
         @Override
@@ -25,41 +28,41 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
             return false;
         }
     };
-    
+
     //Creacion de un objeto AlumnoData, MateriaData y los ArrayList donde estaran todas las materias y alumnos traidos de la base de datos.
     AlumnoData ad;
     MateriaData md;
-    List<Alumno> allAlumnos = new ArrayList<>();
-    List<Materia> allMaterias = new ArrayList<>();
+    List<Alumno> allAlumnosAct = new ArrayList<>();
+    List<Materia> allMateriasAct = new ArrayList<>();
 
     public InscribirAlumno() {
         initComponents();
         UtilidadesGenerales.ocultarMenu(this);
-        
+
         //Evita que se puedan seleccionar ambos radioButtons.
         BGinscripto.add(JRBinscriptas);
         BGinscripto.add(JRBnoInscriptas);
-        
+
         //Este conjunto permite que solo se pueda buscar un alumno por sola una opcion (id o dni), y evita que se puedan seleccionar ambos radioButtons.
         JRBid.setSelected(true);
         BGbuscar.add(JRBid);
         BGbuscar.add(JRBdni);
         JTFbuscarDni.setEnabled(false);
-        
+
         //Inicializa el objeto de tipo AlumnoData y MateriaData, carga los respectivos ArrayList.
         try {
             ad = new AlumnoData();
             md = new MateriaData();
-            allAlumnos = ad.listarAlumnos();
-            allMaterias = md.listarMaterias();
+            allAlumnosAct = ad.listarAlumnosAlta();
+            allMateriasAct = md.listarMateriasAlta();
         } catch (ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(this, "Error al cargar los drivers", "ERROR", JOptionPane.ERROR_MESSAGE);
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Error al establecer la conexion con la base de datos", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
-        
+
         cargarCabeceras();
-        cargarAllDatos();
+        cargarDatosAlumnos();
     }
 
     @SuppressWarnings("unchecked")
@@ -108,13 +111,27 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
 
         JBanular.setFont(new java.awt.Font("Dubai Medium", 1, 18)); // NOI18N
         JBanular.setText("Anular inscripcion");
+        JBanular.setEnabled(false);
 
         JRBinscriptas.setText("Materias Inscriptas");
+        JRBinscriptas.setEnabled(false);
+        JRBinscriptas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JRBinscriptasActionPerformed(evt);
+            }
+        });
 
         JRBnoInscriptas.setText("Materias no inscriptas");
+        JRBnoInscriptas.setEnabled(false);
+        JRBnoInscriptas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JRBnoInscriptasActionPerformed(evt);
+            }
+        });
 
         JBinscribir.setFont(new java.awt.Font("Dubai Medium", 1, 18)); // NOI18N
         JBinscribir.setText("Inscribir");
+        JBinscribir.setEnabled(false);
 
         JTalumnos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -127,6 +144,11 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        JTalumnos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                JTalumnosMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(JTalumnos);
 
         JPbuscar_id.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -261,41 +283,91 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void JRBidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRBidActionPerformed
-//        borrarFilas();
-//        JTFid.setEnabled(true);
-//        JTFbuscarDni.setEnabled(false);
-//        cargarDatos();
-//        limpiar();
-    }//GEN-LAST:event_JRBidActionPerformed
-
+    //Eliminar elementos de la tabla mientras se busca (por id).
     private void JTFidKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTFidKeyReleased
-//        borrarFilas();
-//        for (Alumno a : allAlumnos) {
-//            String id = String.valueOf(a.getIdAlumno());
-//            if (id.startsWith(JTFid.getText())) {
-//                modelo.addRow(new Object[]{a.getIdAlumno(), a.getDni(), a.getNombre(), a.getFechaNac(), a.getActivo()});
-//            }
-//        }
+        borrarFilas();
+        for (Alumno a : allAlumnosAct) {
+            String id = String.valueOf(a.getIdAlumno());
+            if (id.startsWith(JTFid.getText())) {
+                modeloAlumno.addRow(new Object[]{a.getIdAlumno(), a.getDni(), a.getNombre(), a.getFechaNac(), a.getActivo()});
+            }
+        }
     }//GEN-LAST:event_JTFidKeyReleased
 
+    //Eliminar elementos de la tabla mientras se busca (por DNI).
     private void JTFbuscarDniKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTFbuscarDniKeyReleased
-//        borrarFilas();
-//        for (Alumno a : allAlumnos) {
-//            String dni = String.valueOf(a.getDni());
-//            if (dni.startsWith(JTFbuscarDni.getText())) {
-//                modelo.addRow(new Object[]{a.getIdAlumno(), a.getDni(), a.getNombre(), a.getFechaNac(), a.getActivo()});
-//            }
-//        }
+        borrarFilas();
+        for (Alumno a : allAlumnosAct) {
+            String dni = String.valueOf(a.getDni());
+            if (dni.startsWith(JTFbuscarDni.getText())) {
+                modeloAlumno.addRow(new Object[]{a.getIdAlumno(), a.getDni(), a.getNombre(), a.getFechaNac(), a.getActivo()});
+            }
+        }
     }//GEN-LAST:event_JTFbuscarDniKeyReleased
 
+    //Limpieza al intentar buscar por dni, bloqueo campo id.
     private void JRBdniActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRBdniActionPerformed
-//        borrarFilas();
-//        JTFid.setEnabled(false);
-//        JTFbuscarDni.setEnabled(true);
-//        cargarDatos();
-//        limpiar();
+        borrarFilas();
+        JTFid.setEnabled(false);
+        JTFbuscarDni.setEnabled(true);
+        limpiar();
     }//GEN-LAST:event_JRBdniActionPerformed
+
+    //Limpieza al intentar buscar por id, bloqueo campo dni.
+    private void JRBidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRBidActionPerformed
+        borrarFilas();
+        JTFid.setEnabled(true);
+        JTFbuscarDni.setEnabled(false);
+        limpiar();
+    }//GEN-LAST:event_JRBidActionPerformed
+
+    private void JTalumnosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JTalumnosMouseClicked
+        int filaS = JTalumnos.getSelectedRow();
+        if (filaS != -1) {
+            JRBinscriptas.setEnabled(true);
+            JRBnoInscriptas.setEnabled(true);
+
+        }
+    }//GEN-LAST:event_JTalumnosMouseClicked
+
+    private void JRBinscriptasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRBinscriptasActionPerformed
+        modeloMateria.setRowCount(0);
+        int filaS = JTalumnos.getSelectedRow();
+        if (filaS != -1) {
+            int dniAlumno = (int) JTalumnos.getValueAt(filaS, 1);
+            try {
+                for (Materia m : Menu.cd.siInscripto(dniAlumno)) {
+                    modeloMateria.addRow(new Object[]{m.getIdMateria(), m.getNombre(), m.getEstado()});
+                }      
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Error al establecer la conexion con la base de datos", "ERROR", JOptionPane.ERROR_MESSAGE);
+            } catch (ClassNotFoundException ex) {
+                JOptionPane.showMessageDialog(this, "Error al cargar los drivers", "ERROR", JOptionPane.ERROR_MESSAGE);
+            }
+        }else{
+            JOptionPane.showMessageDialog(this, "Debe seleccionar una fila", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_JRBinscriptasActionPerformed
+
+    private void JRBnoInscriptasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRBnoInscriptasActionPerformed
+        modeloMateria.setRowCount(0);
+        int filaS = JTalumnos.getSelectedRow();
+        if (filaS != -1) {
+            int dniAlumno = (int) JTalumnos.getValueAt(filaS, 1);
+            try {
+                for (Materia m : Menu.cd.noInscripto(dniAlumno)) {
+                    modeloMateria.addRow(new Object[]{m.getIdMateria(), m.getNombre(), m.getEstado()});
+                }
+                
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Error al establecer la conexion con la base de datos", "ERROR", JOptionPane.ERROR_MESSAGE);
+            } catch (ClassNotFoundException ex) {
+                JOptionPane.showMessageDialog(this, "Error al cargar los drivers", "ERROR", JOptionPane.ERROR_MESSAGE);
+            }
+        }else{
+            JOptionPane.showMessageDialog(this, "Debe seleccionar una fila", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_JRBnoInscriptasActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -341,17 +413,35 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
     * Carga los alumnos y las materias a las tablas.
     */
     private void cargarAllDatos() {
-        for (Alumno a : allAlumnos) {
+        for (Alumno a : allAlumnosAct) {
             modeloAlumno.addRow(new Object[]{a.getIdAlumno(), a.getDni(), a.getNombre(), a.getFechaNac(), a.getActivo()});
         }
-        for (Materia m : allMaterias) {
+        for (Materia m : allMateriasAct) {
             modeloMateria.addRow(new Object[]{m.getIdMateria(), m.getNombre(), m.getEstado()});
         }
     }
-    
+
     /**
-    * Muestra todas las cursadas del ArrayList.
-    */
+     * Carga los alumnos a la tabla.
+     */
+    private void cargarDatosAlumnos() {
+        for (Alumno a : allAlumnosAct) {
+            modeloAlumno.addRow(new Object[]{a.getIdAlumno(), a.getDni(), a.getNombre(), a.getFechaNac(), a.getActivo()});
+        }
+    }
+
+    /**
+     * Carga las materias a la tabla.
+     */
+    private void cargarDatosMateria() {
+        for (Materia m : allMateriasAct) {
+            modeloMateria.addRow(new Object[]{m.getIdMateria(), m.getNombre(), m.getEstado()});
+        }
+    }
+
+    /**
+     * Muestra todas las cursadas del ArrayList.
+     */
     private void mostrarLista() {
         System.out.println("------------------------");
         for (Cursada c : Menu.allCursadas) {
@@ -361,5 +451,31 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
         System.out.println("");
         System.out.println("");
     }
+
+    /**
+     * Permite borrar las filas mientras se encribe en los campos de filtrar.
+     */
+    private void borrarFilas() {
+        int filas = JTalumnos.getRowCount() - 1;
+        for (int f = filas; f >= 0; f--) {
+            modeloAlumno.removeRow(f);
+        }
+    }
+
+    /**
+     * Vacia/restablece todos los campos.
+     */
+    private void limpiar() {
+        JTFid.setText("");
+        JTFbuscarDni.setText("");
+        modeloAlumno.setRowCount(0);
+        modeloMateria.setRowCount(0);
+        cargarDatosAlumnos();
+        JBinscribir.setEnabled(false);
+        JBanular.setEnabled(false);
+        BGinscripto.clearSelection();
+        JRBinscriptas.setEnabled(false);
+        JRBnoInscriptas.setEnabled(false);
+    }   
 
 }

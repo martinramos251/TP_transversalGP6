@@ -96,6 +96,27 @@ public class AlumnoData {
         return listado;
     }
 
+    public List<Alumno> listarAlumnosAlta() {
+        Alumno alumno = null;
+        ArrayList<Alumno> listado = new ArrayList<>();
+        String sql = "SELECT * FROM alumno WHERE activo = true";
+        try (PreparedStatement ps = conect.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                alumno = new Alumno();
+                alumno.setIdAlumno(rs.getInt("idAlumno"));
+                alumno.setDni(rs.getInt("dni"));
+                alumno.setNombre(rs.getString("nombre"));
+                alumno.setFechaNac(rs.getDate("fechaNac").toLocalDate());
+                alumno.setActivo(rs.getBoolean("activo"));
+                listado.add(alumno);
+            }
+        } catch (SQLException ex) {
+            System.out.println("No se pudo listar los alumnos");
+        }
+        return listado;
+    }
+
     public void actualizarAlumno(Alumno a) {
         String sql = "UPDATE alumno SET dni = ?, nombre = ?, fechaNac = ?, activo = ? WHERE idAlumno = ? ";  //1
 

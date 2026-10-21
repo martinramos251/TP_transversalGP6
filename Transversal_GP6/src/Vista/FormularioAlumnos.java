@@ -447,7 +447,6 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         borrarFilas();
         JTFid.setEnabled(false);
         JTFbuscarDni.setEnabled(true);
-        cargarDatos();
         limpiar();
     }//GEN-LAST:event_JRBdniActionPerformed
 
@@ -456,7 +455,6 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         borrarFilas();
         JTFid.setEnabled(true);
         JTFbuscarDni.setEnabled(false);
-        cargarDatos();
         limpiar();
     }//GEN-LAST:event_JRBidActionPerformed
 
@@ -487,15 +485,19 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
                 }
                 if (disparador) { //Verficacion de DNI repetido.
                     if (nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$")) { //Verficacion de nombre. Funcion que fue investigada, permite que solo acepte letras de la a-z, "Ñ" y tildes (no acepta espacios).
-                        if (fechaNacimiento.isBefore(fechaMaxima) || fechaNacimiento.isEqual(fechaMaxima)) { //Verificacion de fecha de nacimiento.
-                            a = new Alumno(dni, nombre, fechaNacimiento, activo);
-                            ad.guardarAlumno(a);
-                            allAlumnos.add(a);
-                            limpiar();
-                            mostrarLista(); //Muestra la lista para corroborar que se actualizo el ArrayList.
-                            JOptionPane.showMessageDialog(this, "Alumno guardado!");
+                        if (nombre.length() <= 20) { //Verificacion para que el nombre no supere los 20 caracteres admitidos por la base de datos.
+                            if (fechaNacimiento.isBefore(fechaMaxima) || fechaNacimiento.isEqual(fechaMaxima)) { //Verificacion de fecha de nacimiento.
+                                a = new Alumno(dni, nombre, fechaNacimiento, activo);
+                                ad.guardarAlumno(a);
+                                allAlumnos.add(a);
+                                limpiar();
+                                mostrarLista(); //Muestra la lista para corroborar que se actualizo el ArrayList.
+                                JOptionPane.showMessageDialog(this, "Alumno guardado!");
                         } else {
                             JOptionPane.showMessageDialog(this, "Fecha no admitida", "ERROR", JOptionPane.ERROR_MESSAGE);
+                        }
+                        }else{
+                           JOptionPane.showMessageDialog(this, "El nombre debe contener maximo 20 caracteres", "ERROR", JOptionPane.ERROR_MESSAGE); 
                         }
                     } else {
                         JOptionPane.showMessageDialog(this, "Nombre invalido", "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -619,32 +621,36 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
                     }
                     if (disparador) { //Verficacion de DNI repetido.
                         if (nombre.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ]+$")) { //Verficacion de nombre. Funcion que fue investigada, permite que solo acepte letras de la a-z, "Ñ" y tildes (no acepta espacios).
-                            if (fechaNacimiento.isBefore(fechaMaxima) || fechaNacimiento.isEqual(fechaMaxima)) { //Verificacion de fecha de nacimiento.
-                                a = new Alumno(dni, nombre, fechaNacimiento, activo);
-                                a.setIdAlumno(id);
-                                for (Alumno act : allAlumnos) { //Actualizacion del alumno en el ArrayList para actualizar la tabla.
-                                    if (act.getIdAlumno() == id) {
-                                        if (act.getDni() != dni) {
-                                            act.setDni(dni);
-                                            modelo.setValueAt(dni, filaS, 1);
+                            if (nombre.length() <= 20) { //Verificacion para que el nombre no supere los 20 caracteres admitidos por la base de datos.
+                                if (fechaNacimiento.isBefore(fechaMaxima) || fechaNacimiento.isEqual(fechaMaxima)) { //Verificacion de fecha de nacimiento.
+                                    a = new Alumno(dni, nombre, fechaNacimiento, activo);
+                                    a.setIdAlumno(id);
+                                    for (Alumno act : allAlumnos) { //Actualizacion del alumno en el ArrayList para actualizar la tabla.
+                                        if (act.getIdAlumno() == id) {
+                                            if (act.getDni() != dni) {
+                                                act.setDni(dni);
+                                                modelo.setValueAt(dni, filaS, 1);
+                                            }
+                                            if (!act.getNombre().equals(nombre)) {
+                                                act.setNombre(nombre);
+                                                modelo.setValueAt(nombre, filaS, 2);
+                                            }
+                                            if (!act.getFechaNac().equals(fechaNacimiento)) {
+                                                act.setFechaNac(fechaNacimiento);
+                                                modelo.setValueAt(fechaNacimiento, filaS, 3);
+                                            }
+                                            break;
                                         }
-                                        if (!act.getNombre().equals(nombre)) {
-                                            act.setNombre(nombre);
-                                            modelo.setValueAt(nombre, filaS, 2);
-                                        }
-                                        if (!act.getFechaNac().equals(fechaNacimiento)) {
-                                            act.setFechaNac(fechaNacimiento);
-                                            modelo.setValueAt(fechaNacimiento, filaS, 3);
-                                        }
-                                        break;
                                     }
+                                    ad.actualizarAlumno(a);
+                                    limpiar();
+                                    mostrarLista(); //Muestra la lista para corroborar que se actualizo el ArrayList.
+                                    JOptionPane.showMessageDialog(this, "Alumno actualizado!");
+                                } else {
+                                    JOptionPane.showMessageDialog(this, "Fecha no admitida", "ERROR", JOptionPane.ERROR_MESSAGE);
                                 }
-                                ad.actualizarAlumno(a);
-                                limpiar();
-                                mostrarLista(); //Muestra la lista para corroborar que se actualizo el ArrayList.
-                                JOptionPane.showMessageDialog(this, "Alumno actualizado!");
-                            } else {
-                                JOptionPane.showMessageDialog(this, "Fecha no admitida", "ERROR", JOptionPane.ERROR_MESSAGE);
+                            }else{
+                                JOptionPane.showMessageDialog(this, "El nombre debe contener maximo 20 caracteres", "ERROR", JOptionPane.ERROR_MESSAGE);
                             }
                         } else {
                             JOptionPane.showMessageDialog(this, "Nombre invalido", "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -658,7 +664,6 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
             } else {
                 JOptionPane.showMessageDialog(this, "Debe seleccionar una fila para actualizar", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
-
         } catch (NumberFormatException nf) {
             JOptionPane.showMessageDialog(this, "Datos incompletos/incorrectos", "ERROR", JOptionPane.ERROR_MESSAGE);
         } catch (NullPointerException np) {
