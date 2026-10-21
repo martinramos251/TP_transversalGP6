@@ -45,7 +45,7 @@ public class GP6_Universidad {
             /* CARGA DE MATERIAS */
 //            Materia mat = new Materia("Lengua", true);
 //            Materia mat2 = new Materia("Matematicas", true);
-//           Materia mat3 = new Materia("Lab Programacion", true);
+//            Materia mat3 = new Materia("Lab Programacion", true);
 //            Materia mat4 = new Materia("Programacion Web I", true);
 //            Materia mat5 = new Materia("Redes", true);
 //            Materia mat6 = new Materia("Base de Datos", true);
@@ -67,12 +67,14 @@ public class GP6_Universidad {
 //            md.borrarMateria(2);
 //            md.altaBajaLogica(1, false);
 //           System.out.println(md.listarMaterias());
-//           Cursada cursa = new Cursada(alu.buscarAlumno(4), md.buscarMateria(1), 7);
-//            cd.inscribirAlumnoMateria(cursa);
+           Cursada cursa = new Cursada(ad.buscarAlumno(4), md.buscarMateria(1), 7);
+            cd.inscribirAlumnoMateria(cursa);
 //
             //System.out.println(cd.listarInscripciones());
-            System.out.println(ad.listarAlumnos());
-            cd.borrarInscripcion("Lengua");
+           // System.out.println(ad.listarAlumnos());
+           // cd.borrarInscripcion("Lengua");
+//            System.out.println(cd.verificarInscripcion(7,2));
+            
 
         } catch (ClassNotFoundException cnf) {
             JOptionPane.showMessageDialog(null, "Error al cargar los drivers", "ERROR", JOptionPane.ERROR_MESSAGE);

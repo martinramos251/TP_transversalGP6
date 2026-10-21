@@ -17,27 +17,51 @@ public class CursadaData {
     }
 
     //Inscribe un alumno a una materia
-    public void inscribirAlumnoMateria(Cursada c) {
-        if (c.getAlumno().getIdAlumno() == c.getMateria().getIdMateria()) {
+    public void inscribirAlumnoMateria(Cursada c) throws SQLException, ClassNotFoundException {
+        List<Cursada> allCursada = listarInscripciones();
+        
+        //llamamos a verificarInscripcion para saber si el alumno esta inscripto a la materia 
+        //luego verificamos si devuelve algo es por que ya esta inscripto por eso comparamos 
+        if(verificarInscripcion(c.getAlumno().getIdAlumno(),c.getMateria().getIdMateria())){
             
-        }
-        String sql = "INSERT INTO cursada (idAlumno, idMateria, nota) VALUES (?,?,?)";
-        try (PreparedStatement ps = conect.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            ps.setInt(1, c.getAlumno().getIdAlumno());
-            ps.setInt(2, c.getMateria().getIdMateria());
-            ps.setFloat(3, c.getNota());
-            ps.executeUpdate();
+            
+            String sql = "INSERT INTO cursada (idAlumno, idMateria, nota) VALUES (?,?,?)";
+            try (PreparedStatement ps = conect.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                ps.setInt(1, c.getAlumno().getIdAlumno());
+                ps.setInt(2, c.getMateria().getIdMateria());
+                ps.setFloat(3, c.getNota());
+                ps.executeUpdate();
 
-            ResultSet rs = ps.getGeneratedKeys();
-            if (rs.next()) {
-                c.setIdCursada(rs.getInt(1));
-            } else {
-                System.out.println("No se pudo obtener el ID");
+                ResultSet rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    c.setIdCursada(rs.getInt(1));
+                } else {
+                    System.out.println("No se pudo obtener el ID");
+                }
+                System.out.println("Guardado!");
+            } catch (SQLException ex) {
+                System.out.println("No se pudo insertar");
             }
-            System.out.println("Guardado!");
-        } catch (SQLException ex) {
-            System.out.println("No se pudo insertar");
         }
+        else{
+                System.out.println("No se pudo insertar por que ya esta inscripto ");
+        }
+    }
+    public boolean verificarInscripcion(int idAlumno, int idMateria){
+        boolean res = false;
+        String sql = "SELECT * FROM cursada WHERE idAlumno = ? AND idMateria = ?";
+
+        try (PreparedStatement ps = conect.prepareStatement(sql)) {
+            ps.setInt(1, idAlumno);
+            ps.setInt(2, idMateria);
+            ResultSet rs = ps.executeQuery();
+            
+            res = rs.next();
+            
+        } catch (SQLException ex) {
+            System.out.println("No se pudo hacer la consulta");
+        }
+        return res;
     }
 
     //Obtener inscripciones de todos los alumnos.
