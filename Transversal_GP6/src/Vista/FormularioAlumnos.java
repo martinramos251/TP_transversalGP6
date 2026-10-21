@@ -10,15 +10,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 public class FormularioAlumnos extends javax.swing.JInternalFrame {
-
-    //Crea el modelo por default y sobrescribe el metodo de la clase para hacer que las celdas no sean editabes.
+    //Crea el modelo por default de la tabla y sobrescribe el metodo de la clase para hacer que las celdas no sean editabes.
     private DefaultTableModel modelo = new DefaultTableModel() {
         @Override
         public boolean isCellEditable(int f, int c) {
@@ -34,7 +31,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         initComponents();
         UtilidadesGenerales.ocultarMenu(this);
 
-        //Este conjunto permite que solo se pueda buscar un alumnos por sola una opcion (id o dni).
+        //Este conjunto permite que solo se pueda buscar un alumno por sola una opcion (id o dni), y evita que se puedan seleccionar ambos radioButtons.
         JRBid.setSelected(true);
         BGbuscar.add(JRBid);
         BGbuscar.add(JRBdni);
@@ -361,7 +358,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    //Borrar un alumno (en todo).
+    //Borrar un alumno.
     private void JBborrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBborrarActionPerformed
         Iterator<Alumno> it = allAlumnos.iterator(); //Se crea para borrar tambien al alumno del ArrayList.
         int respuesta = JOptionPane.showConfirmDialog(this, "¿Desea eliminar al alumno?", "Advertencia", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
@@ -378,6 +375,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
                 }
 
                 try {
+                    //Permite que si se borra el alumno, tambien se va a eliminar la cursada que contenga el id del alumno eliminado.
                     Menu.cd.borrarInscripcion(id);
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(null, "Error al establecer la conexion con la base de datos", "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -388,6 +386,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
                 ad.borrarAlumno(id); //Ejecuta el metodo de AlumnoData para borrar al alumno de la base de datos.
                 modelo.removeRow(filaS); //Elimina al alumno seleccionado de la tabla.
                 limpiar(); //Limpia todo al terminar.
+                mostrarLista(); //Muestra la lista para corroborar que se actualizo el ArrayList.
                 JOptionPane.showMessageDialog(this, "Alumno eliminado!");
             }
         } else {
@@ -461,7 +460,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         limpiar();
     }//GEN-LAST:event_JRBidActionPerformed
 
-    //Guardar un alumno.
+    //Guarda un alumno (realiza verificaciones).
     private void JBguardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBguardarActionPerformed
         try {
             //Variables para almacenar los datos extraidos.
@@ -493,6 +492,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
                             ad.guardarAlumno(a);
                             allAlumnos.add(a);
                             limpiar();
+                            mostrarLista(); //Muestra la lista para corroborar que se actualizo el ArrayList.
                             JOptionPane.showMessageDialog(this, "Alumno guardado!");
                         } else {
                             JOptionPane.showMessageDialog(this, "Fecha no admitida", "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -506,7 +506,6 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
             } else {
                 JOptionPane.showMessageDialog(this, "DNI invalido, debe contener una combinacion de 7-8 numeros,\nse aceptan solo numeros, sin puntos y espacios", "ERROR", JOptionPane.ERROR_MESSAGE);
             }
-
         } catch (NumberFormatException nf) {
             JOptionPane.showMessageDialog(this, "Datos incompletos/incorrectos", "ERROR", JOptionPane.ERROR_MESSAGE);
         } catch (NullPointerException np) {
@@ -531,6 +530,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
                     }
                 }
                 try {
+                    //Permite que si se da de baja un alumno, se va a eliminar la cursada que contenga el id del alumno dado de baja.
                     Menu.cd.borrarInscripcion(id);
                 } catch (SQLException ex) {
                     JOptionPane.showMessageDialog(null, "Error al establecer la conexion con la base de datos", "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -548,7 +548,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
 
     //Dar de alta a un alumno.
     private void JBaltaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBaltaActionPerformed
-        int filaS = JTalumnos.getSelectedRow();
+        int filaS = JTalumnos.getSelectedRow(); //Traer la fila que estoy seleccionando.
         if (filaS != -1) {
             int id = (int) JTalumnos.getValueAt(filaS, 0);
             boolean estado = (boolean) JTalumnos.getValueAt(filaS, 4);
@@ -571,17 +571,17 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_JBaltaActionPerformed
 
-    //Para habilitar el boton guardar cuando interactua con la fecha.
+    //Habilita el boton guardar cuando interactua con la fecha (todos los campos tienen que estar llenos).
     private void JDCfechaNacPropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_JDCfechaNacPropertyChange
         habilitarGuardar();
     }//GEN-LAST:event_JDCfechaNacPropertyChange
 
-    //Para habilitar el boton guardar cuando interactua con el campo de nombre.
+    //Habilita el boton guardar cuando interactua con el campo de nombre (todos los campos tienen que estar llenos).
     private void JTFnombreKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTFnombreKeyTyped
         habilitarGuardar();
     }//GEN-LAST:event_JTFnombreKeyTyped
 
-    //Para habilitar el boton guardar cuando interactua con el campo de DNI.
+    //Habilita el boton guardar cuando interactua con el campo de DNI (todos los campos tienen que estar llenos).
     private void JTFdniKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_JTFdniKeyTyped
         habilitarGuardar();
     }//GEN-LAST:event_JTFdniKeyTyped
@@ -641,6 +641,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
                                 }
                                 ad.actualizarAlumno(a);
                                 limpiar();
+                                mostrarLista(); //Muestra la lista para corroborar que se actualizo el ArrayList.
                                 JOptionPane.showMessageDialog(this, "Alumno actualizado!");
                             } else {
                                 JOptionPane.showMessageDialog(this, "Fecha no admitida", "ERROR", JOptionPane.ERROR_MESSAGE);
@@ -741,10 +742,18 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
 
         JTalumnos.setModel(modelo);
     }
-
+    
+    /**
+     * Muestra todos los alumnos del ArrayList.
+     */
     private void mostrarLista() {
-        System.out.println(allAlumnos);
-        //System.out.println(allAlumnos2);
+        System.out.println("------------------------");
+        for (Alumno a : allAlumnos) {
+            System.out.println(a);
+            System.out.println("------------------------");
+        }
+        System.out.println("");
+        System.out.println("");
     }
 
     /**

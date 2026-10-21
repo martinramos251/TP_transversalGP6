@@ -24,10 +24,10 @@ public class AlumnoData {
             ResultSet rs = ps.getGeneratedKeys(); //Recupero un alumno y le asigno el id (auto-incremental) al id de mi atributo Alumno
             if (rs.next()) {
                 a.setIdAlumno(rs.getInt(1));
+                System.out.println("Alumno guardado!");
             } else {
                 System.out.println("No se pudo obtener el ID");
             }
-            System.out.println("Alumno guardado!");
         } catch (SQLException ex) {
             System.out.println("No se pudo insertar el alumno");
         }

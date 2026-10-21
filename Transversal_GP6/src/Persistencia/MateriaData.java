@@ -27,6 +27,7 @@ public class MateriaData {
             ResultSet rs = ps.getGeneratedKeys();
             if (rs.next()) {
                 m.setIdMateria(rs.getInt(1));
+                System.out.println("Materia guardada!");
             } else {
                 System.out.println("No se pudo obtener el ID");
             }

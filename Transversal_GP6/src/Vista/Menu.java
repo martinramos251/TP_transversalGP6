@@ -2,7 +2,6 @@ package Vista;
 
 import Entidades.Cursada;
 import Persistencia.CursadaData;
-import Persistencia.MateriaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +15,7 @@ public class Menu extends javax.swing.JFrame {
     public Menu() {
         initComponents();
 
-        //Inicializa el objeto de tipo MateriaData y carga el ArrayList de materias (allMaterias).
+        //Inicializa el objeto de tipo CursadaData y carga el ArrayList de cursadas (allCursadas).
         try {
             cd = new CursadaData();
             allCursadas = cd.listarInscripciones();

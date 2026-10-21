@@ -1,43 +1,65 @@
 package Vista;
 
+import Entidades.Alumno;
+import Entidades.Materia;
 import Entidades.Cursada;
-import Persistencia.CursadaData;
+import Persistencia.AlumnoData;
+import Persistencia.MateriaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-public class InscribirAlumno extends javax.swing.JInternalFrame {
-
-    private DefaultTableModel modelo = new DefaultTableModel() {
+public class InscribirAlumno extends javax.swing.JInternalFrame {  
+    //Crea el modelo por default de la tabla para materias y alumnos, sobrescribe el metodo de la clase para hacer que las celdas no sean editabes.
+    private DefaultTableModel modeloMateria = new DefaultTableModel() {
         @Override
         public boolean isCellEditable(int f, int c) {
             return false;
         }
     };
-
-    private DefaultTableModel modelo2 = new DefaultTableModel() {
+    private DefaultTableModel modeloAlumno = new DefaultTableModel() {
         @Override
         public boolean isCellEditable(int f, int c) {
             return false;
         }
     };
+    
+    //Creacion de un objeto AlumnoData, MateriaData y los ArrayList donde estaran todas las materias y alumnos traidos de la base de datos.
+    AlumnoData ad;
+    MateriaData md;
+    List<Alumno> allAlumnos = new ArrayList<>();
+    List<Materia> allMaterias = new ArrayList<>();
 
-    CursadaData cd;
-    List<Cursada> allCursadas = new ArrayList<>();
     public InscribirAlumno() {
         initComponents();
         UtilidadesGenerales.ocultarMenu(this);
-
+        
+        //Evita que se puedan seleccionar ambos radioButtons.
         BGinscripto.add(JRBinscriptas);
         BGinscripto.add(JRBnoInscriptas);
-
-        cargarCabeceras();
         
+        //Este conjunto permite que solo se pueda buscar un alumno por sola una opcion (id o dni), y evita que se puedan seleccionar ambos radioButtons.
+        JRBid.setSelected(true);
+        BGbuscar.add(JRBid);
+        BGbuscar.add(JRBdni);
+        JTFbuscarDni.setEnabled(false);
+        
+        //Inicializa el objeto de tipo AlumnoData y MateriaData, carga los respectivos ArrayList.
         try {
-            cd = new CursadaData();
-        } catch (Exception e) {
+            ad = new AlumnoData();
+            md = new MateriaData();
+            allAlumnos = ad.listarAlumnos();
+            allMaterias = md.listarMaterias();
+        } catch (ClassNotFoundException ex) {
+            JOptionPane.showMessageDialog(this, "Error al cargar los drivers", "ERROR", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(this, "Error al establecer la conexion con la base de datos", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
-          
+        
+        cargarCabeceras();
+        cargarAllDatos();
     }
 
     @SuppressWarnings("unchecked")
@@ -45,9 +67,10 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
     private void initComponents() {
 
         BGinscripto = new javax.swing.ButtonGroup();
+        BGbuscar = new javax.swing.ButtonGroup();
         JLinscripciones = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        JTvista = new javax.swing.JTable();
+        JTmaterias = new javax.swing.JTable();
         JBanular = new javax.swing.JButton();
         JRBinscriptas = new javax.swing.JRadioButton();
         JRBnoInscriptas = new javax.swing.JRadioButton();
@@ -70,7 +93,7 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
         JLinscripciones.setFont(new java.awt.Font("Dubai Medium", 1, 24)); // NOI18N
         JLinscripciones.setText("Inscripciones");
 
-        JTvista.setModel(new javax.swing.table.DefaultTableModel(
+        JTmaterias.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -81,7 +104,7 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane2.setViewportView(JTvista);
+        jScrollPane2.setViewportView(JTmaterias);
 
         JBanular.setFont(new java.awt.Font("Dubai Medium", 1, 18)); // NOI18N
         JBanular.setText("Anular inscripcion");
@@ -89,11 +112,6 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
         JRBinscriptas.setText("Materias Inscriptas");
 
         JRBnoInscriptas.setText("Materias no inscriptas");
-        JRBnoInscriptas.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                JRBnoInscriptasActionPerformed(evt);
-            }
-        });
 
         JBinscribir.setFont(new java.awt.Font("Dubai Medium", 1, 18)); // NOI18N
         JBinscribir.setText("Inscribir");
@@ -243,10 +261,6 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void JRBnoInscriptasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRBnoInscriptasActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_JRBnoInscriptasActionPerformed
-
     private void JRBidActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRBidActionPerformed
 //        borrarFilas();
 //        JTFid.setEnabled(true);
@@ -285,6 +299,7 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup BGbuscar;
     private javax.swing.ButtonGroup BGinscripto;
     private javax.swing.JButton JBanular;
     private javax.swing.JButton JBinscribir;
@@ -300,23 +315,51 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
     private javax.swing.JTextField JTFbuscarDni;
     private javax.swing.JTextField JTFid;
     private javax.swing.JTable JTalumnos;
-    private javax.swing.JTable JTvista;
+    private javax.swing.JTable JTmaterias;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
 
-    //Agrega las cabeceras a las tablas.
+    /**
+     * Agrega las cabeceras a las tablas.
+     */
     private void cargarCabeceras() {
-        modelo.addColumn("idMateria");
-        modelo.addColumn("Materia");
+        modeloMateria.addColumn("idMateria");
+        modeloMateria.addColumn("Materia");
 
-        modelo2.addColumn("idAlumno");
-        modelo2.addColumn("Dni");
-        modelo2.addColumn("Nombre");
-        modelo2.addColumn("FechaNacimiento");
-        modelo2.addColumn("Activo");
+        modeloAlumno.addColumn("idAlumno");
+        modeloAlumno.addColumn("Dni");
+        modeloAlumno.addColumn("Nombre");
+        modeloAlumno.addColumn("FechaNacimiento");
+        modeloAlumno.addColumn("Activo");
 
-        JTvista.setModel(modelo);
-        JTalumnos.setModel(modelo2);
+        JTmaterias.setModel(modeloMateria);
+        JTalumnos.setModel(modeloAlumno);
     }
+
+    /**
+    * Carga los alumnos y las materias a las tablas.
+    */
+    private void cargarAllDatos() {
+        for (Alumno a : allAlumnos) {
+            modeloAlumno.addRow(new Object[]{a.getIdAlumno(), a.getDni(), a.getNombre(), a.getFechaNac(), a.getActivo()});
+        }
+        for (Materia m : allMaterias) {
+            modeloMateria.addRow(new Object[]{m.getIdMateria(), m.getNombre(), m.getEstado()});
+        }
+    }
+    
+    /**
+    * Muestra todas las cursadas del ArrayList.
+    */
+    private void mostrarLista() {
+        System.out.println("------------------------");
+        for (Cursada c : Menu.allCursadas) {
+            System.out.println(c);
+            System.out.println("------------------------");
+        }
+        System.out.println("");
+        System.out.println("");
+    }
+
 }
