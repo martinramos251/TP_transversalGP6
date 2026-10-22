@@ -7,11 +7,15 @@ import java.util.List;
 
 public class AlumnoData {
     private Connection conect;
-
+    
     public AlumnoData() throws SQLException, ClassNotFoundException {
         conect = MiConexion.buscarConexion();
     }   
-
+    
+    /**
+     * Permite guardar un alumno a la base de datos.
+     * @param a 
+     */
     public void guardarAlumno(Alumno a) {
         String sql = "INSERT INTO alumno (dni, nombre, fechaNac, activo) VALUES (?,?,?,?)";
         try (PreparedStatement ps = conect.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -32,7 +36,12 @@ public class AlumnoData {
             System.out.println("No se pudo insertar el alumno");
         }
     }
-
+    
+    /**
+     * Permite buscar un alumno por su id en la base de datos.
+     * @param id
+     * @return 
+     */
     public Alumno buscarAlumno(int id) {
         Alumno alumno = null;
         String sql = "SELECT * FROM alumno WHERE idAlumno = ?";
@@ -53,7 +62,12 @@ public class AlumnoData {
         }
         return alumno;
     }
-
+    
+    /**
+     * Permite buscar un alumno por su dni en la base de datos.
+     * @param dni
+     * @return 
+     */
     public Alumno buscarAlumnoDni(int dni) {
         Alumno alumno = null;
         String sql = "SELECT * FROM alumno WHERE dni = ?";
@@ -74,7 +88,11 @@ public class AlumnoData {
         }
         return alumno;
     }
-
+    
+    /**
+     * Trae a todos los alumnos de la base de datos.
+     * @return 
+     */
     public List<Alumno> listarAlumnos() {
         Alumno alumno = null;
         ArrayList<Alumno> listado = new ArrayList<>();
@@ -95,7 +113,11 @@ public class AlumnoData {
         }
         return listado;
     }
-
+    
+    /**
+     * Trae a todos los alumnos que esten activos de la base de datos.
+     * @return 
+     */
     public List<Alumno> listarAlumnosAlta() {
         Alumno alumno = null;
         ArrayList<Alumno> listado = new ArrayList<>();
@@ -117,10 +139,14 @@ public class AlumnoData {
         return listado;
     }
 
+    /**
+     * Actualiza un atributo del alumno en la base de datos.
+     * @param a 
+     */
     public void actualizarAlumno(Alumno a) {
-        String sql = "UPDATE alumno SET dni = ?, nombre = ?, fechaNac = ?, activo = ? WHERE idAlumno = ? ";  //1
+        String sql = "UPDATE alumno SET dni = ?, nombre = ?, fechaNac = ?, activo = ? WHERE idAlumno = ? "; 
 
-        try (PreparedStatement ps = conect.prepareStatement(sql)) {//2
+        try (PreparedStatement ps = conect.prepareStatement(sql)) {
             ps.setInt(1, a.getDni());
             ps.setString(2, a.getNombre());
             ps.setDate(3, Date.valueOf(a.getFechaNac()));
@@ -129,10 +155,14 @@ public class AlumnoData {
             ps.executeUpdate();
 
         } catch (SQLException ex) {
-            System.out.println("No se pudo actualizar el alumno"); //Registra el error que ocurrió en AlumnoData como un error grave. Null es porque no puimos un msje personalizado
+            System.out.println("No se pudo actualizar el alumno");
         }
     }
-
+    
+    /**
+     * Borra a un alumno por su id en la base de datos.
+     * @param id 
+     */
     public void borrarAlumno(int id) {
         String sql = "DELETE FROM alumno WHERE idAlumno = ?";
         try (PreparedStatement ps = conect.prepareStatement(sql)) {
@@ -144,11 +174,16 @@ public class AlumnoData {
         }
     }
 
-    //Este metodo lo hacemos asi para reutilizar codigo
+    /**
+     * Permite dar de baja o alta un alumno de la base de datos.
+     * Cambiar su atributo (activo) a "true" o "false" (borrado logico).
+     * @param id
+     * @param status 
+     */
     public void altaBajaLogica(int id, boolean status) {
-        Alumno a = buscarAlumno(id); // Busco el alumno en la base
-        a.setActivo(status); // Modifico el estado (para darle alta o baja) dependiendo lo que reciba por parametro
-        actualizarAlumno(a); // Actualiza en la base el estado del alumno que acabo de modificar 
+        Alumno a = buscarAlumno(id); //Busco el alumno en la base.
+        a.setActivo(status); //Modifico el activo (para darle alta o baja) dependiendo lo que reciba por parametro.
+        actualizarAlumno(a); //Actualiza en la base el estado del alumno que acabo de modificar.
         System.out.println("Se actualizo el estado del alumno " + a.getNombre() + " a " + a.getActivo());
     }
 }

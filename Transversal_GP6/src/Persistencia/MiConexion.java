@@ -23,7 +23,12 @@ public class MiConexion {
         MiConexion.connection = connection;
     }
 
-    //Permite establecer la conexion con la base de datos
+    /**
+     * Permite buscar y establecer una conexion con la base de datos.
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
     public static Connection buscarConexion() throws SQLException, ClassNotFoundException {
         if (connection == null) {
             Class.forName("org.mariadb.jdbc.Driver");

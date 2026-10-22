@@ -9,14 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CursadaData {
-
     private Connection conect;
 
     public CursadaData() throws SQLException, ClassNotFoundException {
         conect = MiConexion.buscarConexion();
     }
 
-    //Inscribe un alumno a una materia
+    /**
+     * Inscribe un alumno a una materia, verifica que no este repetida la inscripcion.
+     * @param c
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
     public void inscribirAlumnoMateria(Cursada c) throws SQLException, ClassNotFoundException {
         List<Cursada> allCursada = listarInscripciones();
         
@@ -64,7 +68,12 @@ public class CursadaData {
         return res;
     }
 
-    //Obtener inscripciones de todos los alumnos.
+    /**
+     * Obtener inscripciones de todos los alumnos.
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
     public List<Cursada> listarInscripciones() throws SQLException, ClassNotFoundException {
         Cursada c = null;
         Alumno a = null;
@@ -91,7 +100,13 @@ public class CursadaData {
         return listaCursada;
     }
 
-    //Obtener las materias en las que un alumno SI esta inscripto.
+    /**
+     * Obtener las materias en las que un alumno SI esta inscripto.
+     * @param dni
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
     public List<Materia> siInscripto(int dni) throws SQLException, ClassNotFoundException {
         List<Cursada> listaInscripto = listarInscripciones();
         List<Materia> materiasInscriptas = new ArrayList<>();
@@ -103,11 +118,17 @@ public class CursadaData {
         return materiasInscriptas;
     }
 
-    //Obtener las materias en las que un alumno NO esta inscripto.
+    /**
+     * Obtener las materias en las que un alumno NO esta inscripto.
+     * @param dni
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
     public List<Materia> noInscripto(int dni) throws SQLException, ClassNotFoundException {
         MateriaData md = new MateriaData();
         List<Materia> materiasInscriptas = siInscripto(dni);
-        List<Materia> totalMaterias = md.listarMaterias();
+        List<Materia> totalMaterias = md.listarMateriasAlta();
         List<Materia> materiasNoInscriptas = new ArrayList<>();
 
         for (Materia m : totalMaterias) {
@@ -118,7 +139,13 @@ public class CursadaData {
         return materiasNoInscriptas;
     }
 
-    //Borrar la inscripcion de un alumno.
+    /**
+     * Borrar la inscripcion de un alumno por id de la base de datos.
+     * @param idAlumno
+     * @param idMateria
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
     public void borrarInscripcion(int idAlumno, int idMateria) throws SQLException, ClassNotFoundException {
 
         AlumnoData ad = new AlumnoData();
@@ -137,7 +164,13 @@ public class CursadaData {
             System.out.println("No se pudo eliminar la cursada/inscripcion");
         }
     }
-
+    
+    /**
+     * Permite borrar la inscripcion de un alumno a traves del nombre de la materia.
+     * @param nombreMateria
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
     public void borrarInscripcion(String nombreMateria) throws SQLException, ClassNotFoundException {
         MateriaData md = new MateriaData();
         Materia m = md.buscarMateriaNombre(nombreMateria);
@@ -154,8 +187,7 @@ public class CursadaData {
     }
 
     /**
-     * Borrar inscripción por idAlumno
-     *
+     * Borrar inscripción de un alumno por su id.
      * @param idAlumno
      * @throws SQLException
      * @throws ClassNotFoundException
@@ -175,7 +207,13 @@ public class CursadaData {
         }
     }
 
-    //Obtener las inscripciones de los alumnos a una sola materia.
+    /**
+     * Obtener todas las inscripciones de los alumnos a una sola materia (por nombre de la materia).
+     * @param nombreMateria
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
     public List<Cursada> inscripcionesMateria(String nombreMateria) throws SQLException, ClassNotFoundException {
         List<Cursada> totalInscripciones = listarInscripciones();
         List<Cursada> inscriptosMateria = new ArrayList<>();
@@ -190,7 +228,13 @@ public class CursadaData {
         return inscriptosMateria;
     }
     
-    //Obtener todas las inscripciones de un alumno según su nombre.
+    /**
+     * Obtener todas las inscripciones en las que esta anotado un alumno especifico (por nombre del alumno).
+     * @param nombreAlumno
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
     public List<Cursada> inscripcionesAlumno(String nombreAlumno) throws SQLException, ClassNotFoundException {
         List<Cursada> totalInscripciones = listarInscripciones();
         List<Cursada> inscriptosAlumno = new ArrayList<>();
@@ -203,6 +247,11 @@ public class CursadaData {
         return inscriptosAlumno;
     }
     
+    /**
+     * Permite actualizar la nota de una cursada (por el id de la cursada).
+     * @param idCursada
+     * @param nota 
+     */
     public void actualizarNota(int idCursada, float nota) {
     String sql = "UPDATE cursada SET nota = ? WHERE idCursada = ?";
     try (PreparedStatement ps = conect.prepareStatement(sql)) {

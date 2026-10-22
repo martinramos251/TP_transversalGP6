@@ -558,5 +558,4 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
         JBanular.setEnabled(false);
         JBinscribir.setEnabled(false);
     }   
-
 }

@@ -10,13 +10,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MateriaData {
-
     private Connection conect;
-
+    
     public MateriaData() throws SQLException, ClassNotFoundException {
         conect = MiConexion.buscarConexion();
     }
-
+    
+    /**
+     * Permite guardar una materia a la base de datos.
+     * @param m 
+     */
     public void guardarMateria(Materia m) {
         String sql = "INSERT INTO materia (nombre, estado) VALUES (?,?)";
         try (PreparedStatement ps = conect.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -37,7 +40,12 @@ public class MateriaData {
             System.out.println("No se pudo insertar la materia");
         }
     }
-
+    
+    /**
+     * Permite buscar una materia por su id en la base de datos.
+     * @param id
+     * @return 
+     */
     public Materia buscarMateria(int id) {
         Materia materia = null;
         String sql = "SELECT * FROM materia WHERE idMateria = ?";
@@ -55,7 +63,12 @@ public class MateriaData {
         }
         return materia;
     }
-
+    
+    /**
+     * Permite buscar una materia por su nombre en la base de datos.
+     * @param nombre
+     * @return 
+     */
     public Materia buscarMateriaNombre(String nombre) {
         Materia materia = null;
         String sql = "SELECT * FROM materia WHERE nombre = ?";
@@ -73,7 +86,11 @@ public class MateriaData {
         }
         return materia;
     }
-
+    
+    /**
+     * Trae todas las materias de la base de datos.
+     * @return 
+     */
     public List<Materia> listarMaterias() {
         Materia materia = null;
         ArrayList<Materia> listaMateria = new ArrayList<>();
@@ -93,6 +110,10 @@ public class MateriaData {
         return listaMateria;
     }
     
+    /**
+     * Trae todas las materias que esten activas de la base de datos.
+     * @return 
+     */
     public List<Materia> listarMateriasAlta() {
         Materia materia = null;
         ArrayList<Materia> listaMateria = new ArrayList<>();
@@ -111,7 +132,11 @@ public class MateriaData {
         }
         return listaMateria;
     }
-
+    
+    /**
+     * Actualiza un atributo de la materia en la base de datos.
+     * @param m 
+     */
     public void actualizarMateria(Materia m) {
         String sql = "UPDATE materia SET nombre = ?, estado = ? WHERE idMateria = ?";
         try (PreparedStatement ps = conect.prepareStatement(sql)) {
@@ -123,9 +148,12 @@ public class MateriaData {
             System.out.println("No se pudo actualizar la materia");
         }
     }
-
+    
+    /**
+     * Permite borrar una materia de la base de datos.
+     * @param idMateria 
+     */
     public void borrarMateria(int idMateria) {
-
         String sql = "DELETE FROM materia WHERE idMateria = ?";
         try (PreparedStatement ps = conect.prepareStatement(sql)) {
             ps.setInt(1, idMateria);
@@ -135,11 +163,17 @@ public class MateriaData {
             System.out.println("No se pudo eliminar la materia");
         }
     }
-
+    
+    /**
+     * Permite dar de baja o alta una materia de la base de datos.
+     * Cambiar su atributo (estado) a "true" o "false" (borrado logico).
+     * @param idMateria
+     * @param estado 
+     */
     public void altaBajaLogica(int idMateria, boolean estado) {
-        Materia m = buscarMateria(idMateria); // Busco el alumno en la base
-        m.setEstado(estado); // Modifico el estado (para darle alta o baja) dependiendo lo que reciba por parametro
-        actualizarMateria(m); // Actualiza en la base el estado del alumno que acabo de modificar 
+        Materia m = buscarMateria(idMateria); //Busco una materia en la base.
+        m.setEstado(estado); //Modifico el estado (para darle alta o baja) dependiendo lo que reciba por parametro.
+        actualizarMateria(m); //Actualiza en la base el estado de la materia que acabo de modificar. 
         System.out.println("Se actualizo el estado de la materia " + m.getNombre() + " a " + m.getEstado());
     }
 }

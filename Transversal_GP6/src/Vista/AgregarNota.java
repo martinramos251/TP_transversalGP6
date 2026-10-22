@@ -125,7 +125,7 @@ public class AgregarNota extends javax.swing.JInternalFrame {
                         .addComponent(JLcalificacion)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(JTFnota, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(62, 62, 62)
+                        .addGap(33, 33, 33)
                         .addComponent(JBactualizar, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(72, Short.MAX_VALUE))
         );
@@ -170,11 +170,34 @@ public class AgregarNota extends javax.swing.JInternalFrame {
             }
         }
     }//GEN-LAST:event_JCBalumnosActionPerformed
-
+    
+    //Permite actualizar la nota de una materia correspondiente a un alumno.
     private void JBactualizarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBactualizarActionPerformed
-        // TODO add your handling code here:
+        int filaS = JTcursadas.getSelectedRow();
+        try {
+            if (filaS != -1) {
+                int idCursada = (int) JTcursadas.getValueAt(filaS, 0);
+                for (Cursada c : Menu.allCursadas) {
+                    if (idCursada == c.getIdCursada()) {
+                        float nota = Float.parseFloat(JTFnota.getText());
+                        if (nota >= 1 && nota <= 10) {
+                            c.setNota(nota);
+                            Menu.cd.actualizarNota(idCursada, nota);
+                            modeloCursada.setValueAt(nota, filaS, 2);
+                            JOptionPane.showMessageDialog(this, "Nota actualizada con éxito!");
+                            break;
+                        }else{
+                            JOptionPane.showMessageDialog(this, "Debe ingresar una nota entre 1 y 10", "ERROR", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                }
+            }else{
+                JOptionPane.showMessageDialog(this, "Debe seleccionar una fila para actualizar", "ERROR", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (NumberFormatException nf) {
+            JOptionPane.showMessageDialog(this, "No se admiten comas, letras y espacios.\nSolo se admiten puntos", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_JBactualizarActionPerformed
-
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton JBactualizar;

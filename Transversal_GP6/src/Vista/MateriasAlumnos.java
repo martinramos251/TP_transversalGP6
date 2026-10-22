@@ -39,8 +39,8 @@ public class MateriasAlumnos extends javax.swing.JInternalFrame {
         try {
             ad = new AlumnoData();
             md = new MateriaData();
-            allAlumnos = ad.listarAlumnos();
-            allMaterias = md.listarMaterias();
+            allAlumnos = ad.listarAlumnosAlta();
+            allMaterias = md.listarMateriasAlta();
         } catch (ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(this, "Error al cargar los drivers", "ERROR", JOptionPane.ERROR_MESSAGE);
         } catch (SQLException ex) {
