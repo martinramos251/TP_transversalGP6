@@ -6,7 +6,6 @@ import java.awt.Image;
 import java.time.ZoneId;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +24,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
 
     //Creacion de un objeto AlumnoData y el ArrayList donde estaran todos los alumnos traidos de la base de datos.
     AlumnoData ad;
-    List<Alumno> allAlumnos = new ArrayList<>();
+    List<Alumno> allAlumnos;
 
     public FormularioAlumnos() {
         initComponents();
@@ -373,7 +372,7 @@ public class FormularioAlumnos extends javax.swing.JInternalFrame {
                         break;
                     }
                 }
-
+                
                 try {
                     //Permite que si se borra el alumno, tambien se va a eliminar la cursada que contenga el id del alumno eliminado.
                     Menu.cd.borrarInscripcion(id);

@@ -3,14 +3,13 @@ package Vista;
 import Entidades.Cursada;
 import Persistencia.CursadaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 
 public class Menu extends javax.swing.JFrame {
     
     //Creacion del objeto tipo CursadaData y del ArrayList tipo Cursada.
-    static List<Cursada> allCursadas = new ArrayList<>();
+    static List<Cursada> allCursadas;
     static CursadaData cd;
 
     public Menu() {
@@ -39,6 +38,7 @@ public class Menu extends javax.swing.JFrame {
         JMIinscribir = new javax.swing.JMenuItem();
         JMadministrar = new javax.swing.JMenu();
         JMImateriasAlumno = new javax.swing.JMenuItem();
+        JMIagregarNota = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Sistema de Gestión (SGULP)");
@@ -47,11 +47,11 @@ public class Menu extends javax.swing.JFrame {
         JDPescritorio.setLayout(JDPescritorioLayout);
         JDPescritorioLayout.setHorizontalGroup(
             JDPescritorioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1055, Short.MAX_VALUE)
+            .addGap(0, 1223, Short.MAX_VALUE)
         );
         JDPescritorioLayout.setVerticalGroup(
             JDPescritorioLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 730, Short.MAX_VALUE)
+            .addGap(0, 855, Short.MAX_VALUE)
         );
 
         JMalumnos.setText("Menu");
@@ -84,13 +84,21 @@ public class Menu extends javax.swing.JFrame {
 
         JMadministrar.setText("Administrar");
 
-        JMImateriasAlumno.setText("Ver materias de alumno");
+        JMImateriasAlumno.setText("Ver materias de alumnos y cursadas");
         JMImateriasAlumno.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 JMImateriasAlumnoActionPerformed(evt);
             }
         });
         JMadministrar.add(JMImateriasAlumno);
+
+        JMIagregarNota.setText("Subir nota final");
+        JMIagregarNota.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JMIagregarNotaActionPerformed(evt);
+            }
+        });
+        JMadministrar.add(JMIagregarNota);
 
         JMenuBarra.add(JMadministrar);
 
@@ -150,6 +158,16 @@ public class Menu extends javax.swing.JFrame {
         JDPescritorio.moveToFront(ventana);
     }//GEN-LAST:event_JMImateriasAlumnoActionPerformed
 
+    private void JMIagregarNotaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JMIagregarNotaActionPerformed
+        JDPescritorio.removeAll();
+        JDPescritorio.revalidate();
+        JDPescritorio.repaint();
+        AgregarNota ventana = new AgregarNota();
+        ventana.setVisible(true);
+        JDPescritorio.add(ventana);
+        JDPescritorio.moveToFront(ventana);
+    }//GEN-LAST:event_JMIagregarNotaActionPerformed
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -184,6 +202,7 @@ public class Menu extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JDesktopPane JDPescritorio;
+    private javax.swing.JMenuItem JMIagregarNota;
     private javax.swing.JMenuItem JMIformularioAlumno;
     private javax.swing.JMenuItem JMIformularioMateria;
     private javax.swing.JMenuItem JMIinscribir;

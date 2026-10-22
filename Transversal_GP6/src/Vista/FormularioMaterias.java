@@ -4,7 +4,6 @@ import Entidades.Materia;
 import Persistencia.MateriaData;
 import java.awt.Image;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.ImageIcon;
@@ -22,7 +21,7 @@ public class FormularioMaterias extends javax.swing.JInternalFrame {
 
     //Creacion de un objeto MateriaData y el ArrayList donde estaran todos las materias traidas de la base de datos.
     MateriaData md;
-    List<Materia> allMaterias = new ArrayList<>();
+    List<Materia> allMaterias;
 
     public FormularioMaterias() {
         initComponents();

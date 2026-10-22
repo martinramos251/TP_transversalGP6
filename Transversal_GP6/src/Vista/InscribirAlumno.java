@@ -6,10 +6,7 @@ import Entidades.Cursada;
 import Persistencia.AlumnoData;
 import Persistencia.MateriaData;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -32,8 +29,8 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
     //Creacion de un objeto AlumnoData, MateriaData y los ArrayList donde estaran todas las materias y alumnos traidos de la base de datos.
     AlumnoData ad;
     MateriaData md;
-    List<Alumno> allAlumnosAct = new ArrayList<>();
-    List<Materia> allMateriasAct = new ArrayList<>();
+    List<Alumno> allAlumnosAct;
+    List<Materia> allMateriasAct;
 
     public InscribirAlumno() {
         initComponents();
@@ -112,6 +109,11 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
         JBanular.setFont(new java.awt.Font("Dubai Medium", 1, 18)); // NOI18N
         JBanular.setText("Anular inscripcion");
         JBanular.setEnabled(false);
+        JBanular.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JBanularActionPerformed(evt);
+            }
+        });
 
         JRBinscriptas.setText("Materias Inscriptas");
         JRBinscriptas.setEnabled(false);
@@ -132,6 +134,11 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
         JBinscribir.setFont(new java.awt.Font("Dubai Medium", 1, 18)); // NOI18N
         JBinscribir.setText("Inscribir");
         JBinscribir.setEnabled(false);
+        JBinscribir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JBinscribirActionPerformed(evt);
+            }
+        });
 
         JTalumnos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -292,6 +299,8 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
                 modeloAlumno.addRow(new Object[]{a.getIdAlumno(), a.getDni(), a.getNombre(), a.getFechaNac(), a.getActivo()});
             }
         }
+        BGinscripto.clearSelection();
+        modeloMateria.setRowCount(0);
     }//GEN-LAST:event_JTFidKeyReleased
 
     //Eliminar elementos de la tabla mientras se busca (por DNI).
@@ -303,6 +312,8 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
                 modeloAlumno.addRow(new Object[]{a.getIdAlumno(), a.getDni(), a.getNombre(), a.getFechaNac(), a.getActivo()});
             }
         }
+        BGinscripto.clearSelection();
+        modeloMateria.setRowCount(0);
     }//GEN-LAST:event_JTFbuscarDniKeyReleased
 
     //Limpieza al intentar buscar por dni, bloqueo campo id.
@@ -320,21 +331,30 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
         JTFbuscarDni.setEnabled(false);
         limpiar();
     }//GEN-LAST:event_JRBidActionPerformed
-
+    
+    //Habilita los botones para ver las meterias inscriptas/no inscriptas cuando se selecciona un elemento de la tabla.
     private void JTalumnosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_JTalumnosMouseClicked
+        BGinscripto.clearSelection();
+        modeloMateria.setRowCount(0);
+        JBanular.setEnabled(false);
+        JBinscribir.setEnabled(false);
+        
         int filaS = JTalumnos.getSelectedRow();
         if (filaS != -1) {
             JRBinscriptas.setEnabled(true);
             JRBnoInscriptas.setEnabled(true);
-
         }
     }//GEN-LAST:event_JTalumnosMouseClicked
-
+    
+    /* Permite que al hacer click en los radioButtons para filtrar entre materias inscriptas y no inscriptas,
+    se carguen en la tabla las materias que correspondan. */
     private void JRBinscriptasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JRBinscriptasActionPerformed
         modeloMateria.setRowCount(0);
         int filaS = JTalumnos.getSelectedRow();
         if (filaS != -1) {
             int dniAlumno = (int) JTalumnos.getValueAt(filaS, 1);
+            JBinscribir.setEnabled(false);
+            JBanular.setEnabled(true);
             try {
                 for (Materia m : Menu.cd.siInscripto(dniAlumno)) {
                     modeloMateria.addRow(new Object[]{m.getIdMateria(), m.getNombre(), m.getEstado()});
@@ -354,11 +374,12 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
         int filaS = JTalumnos.getSelectedRow();
         if (filaS != -1) {
             int dniAlumno = (int) JTalumnos.getValueAt(filaS, 1);
+            JBanular.setEnabled(false);
+            JBinscribir.setEnabled(true);
             try {
                 for (Materia m : Menu.cd.noInscripto(dniAlumno)) {
                     modeloMateria.addRow(new Object[]{m.getIdMateria(), m.getNombre(), m.getEstado()});
-                }
-                
+                }   
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(this, "Error al establecer la conexion con la base de datos", "ERROR", JOptionPane.ERROR_MESSAGE);
             } catch (ClassNotFoundException ex) {
@@ -368,6 +389,64 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
             JOptionPane.showMessageDialog(this, "Debe seleccionar una fila", "ERROR", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_JRBnoInscriptasActionPerformed
+    
+    //Permite inscribir un alumno a una materia.
+    private void JBinscribirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBinscribirActionPerformed
+        Cursada c;
+        Alumno a;
+        Materia m;
+        
+        int filaAlumnoS = JTalumnos.getSelectedRow();
+        int filaMateriaS = JTmaterias.getSelectedRow();
+        if (filaAlumnoS != -1 && filaMateriaS != -1) {
+            int idAlumno = (int) JTalumnos.getValueAt(filaAlumnoS, 0);
+            int idMateria = (int) JTmaterias.getValueAt(filaMateriaS, 0);
+            a = new Alumno();
+            m = new Materia();
+            a.setIdAlumno(idAlumno);
+            m.setIdMateria(idMateria);
+            c = new Cursada(a, m);
+            try {
+                Menu.cd.inscribirAlumnoMateria(c);
+                modeloMateria.removeRow(filaMateriaS);
+                JOptionPane.showMessageDialog(this, "El alumno fue inscripto con éxito!");
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Error al establecer la conexion con la base de datos", "ERROR", JOptionPane.ERROR_MESSAGE);
+            } catch (ClassNotFoundException ex) {
+                JOptionPane.showMessageDialog(this, "Error al cargar los drivers", "ERROR", JOptionPane.ERROR_MESSAGE);
+            }
+        }else{
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un alumno y una materia", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_JBinscribirActionPerformed
+    
+    //Permite anular la inscripcion de un alumno a una materia.
+    private void JBanularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_JBanularActionPerformed
+        Alumno a;
+        Materia m;
+        
+        int filaAlumnoS = JTalumnos.getSelectedRow();
+        int filaMateriaS = JTmaterias.getSelectedRow();
+        if (filaAlumnoS != -1 && filaMateriaS != -1) {
+            int idAlumno = (int) JTalumnos.getValueAt(filaAlumnoS, 0);
+            int idMateria = (int) JTmaterias.getValueAt(filaMateriaS, 0);
+            a = new Alumno();
+            m = new Materia();
+            a.setIdAlumno(idAlumno);
+            m.setIdMateria(idMateria);
+            try {
+                Menu.cd.borrarInscripcion(idAlumno, idMateria);
+                modeloMateria.removeRow(filaMateriaS);
+                JOptionPane.showMessageDialog(this, "Inscripcion anulada con éxito!");
+            } catch (SQLException ex) {
+                JOptionPane.showMessageDialog(this, "Error al establecer la conexion con la base de datos", "ERROR", JOptionPane.ERROR_MESSAGE);
+            } catch (ClassNotFoundException ex) {
+                JOptionPane.showMessageDialog(this, "Error al cargar los drivers", "ERROR", JOptionPane.ERROR_MESSAGE);
+            }
+        }else{
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un alumno y una materia", "ERROR", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_JBanularActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -476,6 +555,8 @@ public class InscribirAlumno extends javax.swing.JInternalFrame {
         BGinscripto.clearSelection();
         JRBinscriptas.setEnabled(false);
         JRBnoInscriptas.setEnabled(false);
+        JBanular.setEnabled(false);
+        JBinscribir.setEnabled(false);
     }   
 
 }

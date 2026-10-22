@@ -22,7 +22,7 @@ public class CursadaData {
         
         //llamamos a verificarInscripcion para saber si el alumno esta inscripto a la materia 
         //luego verificamos si devuelve algo es por que ya esta inscripto por eso comparamos 
-        if(verificarInscripcion(c.getAlumno().getIdAlumno(),c.getMateria().getIdMateria())){
+        if(!verificarInscripcion(c.getAlumno().getIdAlumno(),c.getMateria().getIdMateria())){
             
             
             String sql = "INSERT INTO cursada (idAlumno, idMateria, nota) VALUES (?,?,?)";
@@ -38,7 +38,7 @@ public class CursadaData {
                 } else {
                     System.out.println("No se pudo obtener el ID");
                 }
-                System.out.println("Guardado!");
+                System.out.println("Inscripcion guardada!");
             } catch (SQLException ex) {
                 System.out.println("No se pudo insertar");
             }
@@ -119,26 +119,23 @@ public class CursadaData {
     }
 
     //Borrar la inscripcion de un alumno.
-    public void borrarInscripcion(int dni, String nombreMateria) throws SQLException, ClassNotFoundException {
+    public void borrarInscripcion(int idAlumno, int idMateria) throws SQLException, ClassNotFoundException {
 
         AlumnoData ad = new AlumnoData();
-        Alumno a = ad.buscarAlumnoDni(dni);
+        Alumno a = ad.buscarAlumno(idAlumno);
 
         MateriaData md = new MateriaData();
-        Materia m = md.buscarMateriaNombre(nombreMateria);
+        Materia m = md.buscarMateria(idMateria);
 
         String sql = "DELETE FROM cursada WHERE idMateria = ? AND idAlumno = ?";
         try (PreparedStatement ps = conect.prepareStatement(sql)) {
             ps.setInt(1, m.getIdMateria());
             ps.setInt(2, a.getIdAlumno());
-
             ps.executeUpdate();
-
             System.out.println("Cursada/inscripcion eliminada correctamente");
         } catch (SQLException ex) {
             System.out.println("No se pudo eliminar la cursada/inscripcion");
         }
-
     }
 
     public void borrarInscripcion(String nombreMateria) throws SQLException, ClassNotFoundException {
@@ -180,17 +177,41 @@ public class CursadaData {
 
     //Obtener las inscripciones de los alumnos a una sola materia.
     public List<Cursada> inscripcionesMateria(String nombreMateria) throws SQLException, ClassNotFoundException {
-        List<Cursada> totalIscripciones = listarInscripciones();
+        List<Cursada> totalInscripciones = listarInscripciones();
         List<Cursada> inscriptosMateria = new ArrayList<>();
         MateriaData md = new MateriaData();
         Materia m = md.buscarMateriaNombre(nombreMateria);
 
-        for (Cursada c : totalIscripciones) {
+        for (Cursada c : totalInscripciones) {
             if (c.getMateria().getIdMateria() == m.getIdMateria()) {
                 inscriptosMateria.add(c);
             }
         }
-
         return inscriptosMateria;
     }
+    
+    //Obtener todas las inscripciones de un alumno según su nombre.
+    public List<Cursada> inscripcionesAlumno(String nombreAlumno) throws SQLException, ClassNotFoundException {
+        List<Cursada> totalInscripciones = listarInscripciones();
+        List<Cursada> inscriptosAlumno = new ArrayList<>();
+
+        for (Cursada c : totalInscripciones) {
+            if (c.getAlumno() != null && c.getAlumno().getNombre().equalsIgnoreCase(nombreAlumno)) {
+                inscriptosAlumno.add(c);
+            }
+        } 
+        return inscriptosAlumno;
+    }
+    
+    public void actualizarNota(int idCursada, float nota) {
+    String sql = "UPDATE cursada SET nota = ? WHERE idCursada = ?";
+    try (PreparedStatement ps = conect.prepareStatement(sql)) {
+        ps.setFloat(1, nota);
+        ps.setInt(2, idCursada);
+        ps.executeUpdate();
+        System.out.println("Nota actualizada correctamente!");
+    } catch (SQLException ex) {
+        System.out.println("No se pudo actualizar la nota");
+    }
+}
 }
