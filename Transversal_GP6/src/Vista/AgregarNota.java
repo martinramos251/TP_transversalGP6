@@ -35,7 +35,7 @@ public class AgregarNota extends javax.swing.JInternalFrame {
         try {
             ad = new AlumnoData();
             md = new MateriaData();
-            allAlumnos = ad.listarAlumnos();
+            allAlumnos = ad.listarAlumnosAlta();
             allMaterias = md.listarMaterias();
         } catch (ClassNotFoundException ex) {
             JOptionPane.showMessageDialog(this, "Error al cargar los drivers", "ERROR", JOptionPane.ERROR_MESSAGE);
